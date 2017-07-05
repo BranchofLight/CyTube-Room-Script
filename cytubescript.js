@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 /* TODO:
  * 'next skips next video after previous video would have ended normally
  * 'remove is also broken
@@ -397,4 +395,3 @@ var main = function() {
   nameMsgObserver.observe(msgTarget, nameMsgConfig);
   usrListObserver.observe(usrTarget, usrListConfig);
 }();
->>>>>>> f0d2acb0e9181ff2c62469c380abd26577c1af59
