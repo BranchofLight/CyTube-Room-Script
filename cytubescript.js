@@ -125,8 +125,8 @@ var checkForOptions = function(targ) {
 
       var imgElement = document.createElement('img');
       imgElement.src = image.src;
-      imgElement.style["max-width"] = "450px";
-      imgElement.style["max-height"] = "300px";
+      imgElement.style["max-width"] = "350px";
+      imgElement.style["max-height"] = "200px";
       imgElement.style.cursor = "pointer";
       targ.appendChild(imgElement);
       targ.childNodes[2].remove();
