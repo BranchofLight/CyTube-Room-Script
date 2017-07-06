@@ -22,9 +22,11 @@ var isMod = function(usr) {
 var colourMap = {"sadweeaboo2" : "red", "RyanGoslingTwerk" : "#ff66cc"};
 
 var addVideoTitleToTarget = function(targ) {
-  var videoTitle = targ.firstChild.innerText;
-  if (videoTitle.indexOf(targ.title) < 0) {
-      targ.firstChild.innerText += " " + targ.title;
+  if (targ !== undefined) {
+    var videoTitle = targ.firstChild.innerText;
+    if (videoTitle.indexOf(targ.title) < 0) {
+        targ.firstChild.innerText += " " + targ.title;
+    }
   }
 };
 
@@ -125,11 +127,8 @@ var checkForOptions = function(targ) {
       imgElement.src = image.src;
       imgElement.style["max-width"] = "450px";
       imgElement.style["max-height"] = "300px";
-      var imgLink = document.createElement('a');
-      imgLink.setAttribute('href', image.src);
-      imgLink.setAttribute('target', "_blank");
-      imgLink.appendChild(imgElement);
-      targ.appendChild(imgLink);
+      imgElement.style.cursor = "pointer";
+      targ.appendChild(imgElement);
       targ.childNodes[2].remove();
 
       var imgDiv = document.createElement('div');
@@ -146,32 +145,44 @@ var checkForOptions = function(targ) {
       imgPreview.style.visibility = "hidden";
       imgPreview.style.position = "fixed";
       imgPreview.style.top = "0px";
+      imgPreview.style.left = "0px";
       imgPreview.style["z-index"] = 25;
+
       imgDiv.appendChild(imgPreview);
       targ.appendChild(imgDiv);
 
-      var inListener = function(e) {
-        var img = imgDiv.childNodes[0];
+      var clickShow = function(e) {
         // Must be called here as offsetWidth/Height may change
-        imgDiv.style.width = document.body.offsetWidth + "px";
-        imgDiv.style.height = document.body.offsetHeight + "px";
-        img.style.left = ((document.body.offsetWidth - img.width) / 2) + "px";
-        img.style["max-width"] = document.body.offsetWidth*0.8 + "px";
-        img.style["max-height"] = document.body.offsetHeight*0.98 + "px";
-        img.style.visibility = "visible";
+        imgDiv.style.width = window.innerWidth + "px";
+        imgDiv.style.height = window.innerHeight + "px";
         imgDiv.style.visibility = "visible";
+
+        imgPreview.style["max-width"] = window.innerWidth*0.8 + "px";
+        imgPreview.style["max-height"] = window.innerHeight*0.98 + "px";
+        imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
+        imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
+        imgPreview.style.visibility = "visible";
       };
 
-      var clickListener = function(e) {
-        var img = imgDiv.childNodes[0];
-        img.style.visibility = "hidden";
+      var clickHide = function(e) {
+        imgPreview.style.visibility = "hidden";
         imgDiv.style.visibility = "hidden";
       };
 
-      imgElement.addEventListener('mouseover', inListener);
-      imgDiv.addEventListener('mouseover', inListener);
+      imgElement.addEventListener('click', clickShow);
 
-      imgDiv.addEventListener('click',  clickListener);
+      imgDiv.addEventListener('click',  clickHide);
+      imgPreview.addEventListener('click',  clickHide);
+
+      window.onresize = function() {
+        imgDiv.style.width = window.innerWidth + "px";
+        imgDiv.style.height = window.innerHeight + "px";
+
+        imgPreview.style["max-width"] = window.innerWidth*0.8 + "px";
+        imgPreview.style["max-height"] = window.innerHeight*0.98 + "px";
+        imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
+        imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
+      };
     }
   }
 };
