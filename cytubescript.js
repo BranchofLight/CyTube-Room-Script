@@ -263,4 +263,9 @@ var main = function() {
   videoTitleObserver.observe(videoTitleTarget, videoTitleConfig);
   nameMsgObserver.observe(msgTarget, nameMsgConfig);
   usrListObserver.observe(usrTarget, usrListConfig);
+
+  // Check all messages in history
+  for (let i = 0; i < msgTarget.childNodes.length; i++) {
+    checkForOptions(msgTarget.childNodes[i]);
+  }
 }();
