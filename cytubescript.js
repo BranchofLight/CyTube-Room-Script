@@ -5,7 +5,7 @@
  * Add sort bot
  * bump
  * bot responses
- * Image previews (imgur only - optional??? some symbol for preview???)
+ * bot can work by creating a lock so that multiple scripts arent exectued at the same time
  */
 
 /*
@@ -127,7 +127,8 @@ var checkForOptions = function(targ) {
       imgElement.src = image.src;
       imgElement.style["max-width"] = "350px";
       imgElement.style["max-height"] = "200px";
-      imgElement.style.cursor = "pointer";
+      imgElement.style.cursor = "zoom-in";
+      imgElement.classList.add('user-img');
       targ.appendChild(imgElement);
       targ.childNodes[2].remove();
 
@@ -138,8 +139,9 @@ var checkForOptions = function(targ) {
       imgDiv.style.width = document.body.offsetWidth + "px";
       imgDiv.style.height = document.body.offsetHeight + "px";
       imgDiv.style["background-color"] = "rgba(23, 23, 23, 0.75)";
-      imgDiv.style["z-index"] = 20;
+      imgDiv.style["z-index"] = 2000; // Has to be above the fixed header
       imgDiv.style.visibility = "hidden";
+      imgDiv.style.cursor = "zoom-out";
       var imgPreview = document.createElement('img');
       imgPreview.src = image.src;
       imgPreview.style.visibility = "hidden";
@@ -147,6 +149,7 @@ var checkForOptions = function(targ) {
       imgPreview.style.top = "0px";
       imgPreview.style.left = "0px";
       imgPreview.style["z-index"] = 25;
+      imgPreview.style.cursor = "zoom-out";
 
       imgDiv.appendChild(imgPreview);
       targ.appendChild(imgDiv);
@@ -268,4 +271,18 @@ var main = function() {
   for (let i = 0; i < msgTarget.childNodes.length; i++) {
     checkForOptions(msgTarget.childNodes[i]);
   }
+
+  // Add any custom CSS
+  var css = `.user-img:hover {
+    filter: grayscale(40%);
+  }`;
+
+  var cssTag = document.createElement('style');
+  if (cssTag.styleSheet) {
+    cssTag.styleSheet.cssText = css;
+  } else {
+    cssTag.appendChild(document.createTextNode(css));
+  }
+
+  document.querySelector('head').appendChild(cssTag);
 }();
