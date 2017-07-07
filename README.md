@@ -3,13 +3,13 @@
 This script adds functionality to any CyTube video room. 
 
 ## Feature List
-- usernames are displayed on all sent messages for easier identification
-- usernames also displayed beside videos to identify who added what
-- embedded images with large sized previews
-- custom colour mappings for any registered users
-- dice rolling of any side amount
-- ability to add custom "bot"/server messages
-- much more in progress
+- Usernames are displayed on all sent messages for easier identification.
+- Usernames also displayed beside videos to identify who added what.
+- Embedded images with large sized previews.
+- Custom colour mappings for any registered users.
+- Dice rolling of any side amount.
+- Ability to add custom "bot"/server messages.
+- Much more in progress.
 
 ## Installation
 1. Go to a channel page where you have script permissions.
