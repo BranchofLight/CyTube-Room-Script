@@ -322,6 +322,12 @@ var main = function() {
   });
 
   document.querySelector('#leftpane').appendChild(testArea);
+  var bannerDiv = document.createElement('div');
+  bannerDiv.classList.add('banner');
+  var bannerImg = document.createElement('img');
+  bannerImg.src = "http://i.imgur.com/b2O7hQq.png";
+  bannerDiv.appendChild(bannerImg);
+  document.querySelector('.container-fluid').insertBefore(bannerDiv, document.querySelector('#announcements'));
 
   // Add any custom CSS
   // Used over cytube CSS editor so you only have to update one file
@@ -334,6 +340,15 @@ var main = function() {
     border: 2px dotted white;
     text-align: center;
     font-size: 24px;
+  }
+  .banner {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  .banner img {
+    width: 100%;
+    height: 180px;
   }`;
 
   var cssTag = document.createElement('style');
