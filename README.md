@@ -1,4 +1,4 @@
-# CyTube-Room-Script
+# CyTube Room Script
 
 This script adds functionality to any CyTube video room. 
 
