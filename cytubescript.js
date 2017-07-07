@@ -30,6 +30,16 @@ var addVideoTitleToTarget = function(targ) {
   }
 };
 
+var addBotMsg = function(msg, colour) {
+  var element = document.createElement('div');
+  element.classList.add('server-msg-reconnect'); // Spoofs a server message
+  element.style.color = colour;
+  element.style.border = "1px solid " + colour;
+  element.innerText = msg;
+  document.querySelector('#messagebuffer').appendChild(element);
+  document.querySelector('#messagebuffer').scrollTop = document.querySelector('#messagebuffer').scrollHeight;
+};
+
 var addNameToTarget = function(targ) {
   var username = targ.className.substring(("chat-msg-").length, targ.className.length);
   if (targ.childNodes.length < 3 && targ.className.indexOf("server-msg") < 0 && targ.className.indexOf("\\$server\\$") < 0) {
@@ -47,26 +57,6 @@ var addNameToTarget = function(targ) {
 
   if (colourMap[username] !== undefined) {
     targ.childNodes[1].style.color = colourMap[username];
-  }
-
-  if (username === admin || isMod(username)) {
-    if (targ.childNodes[2].innerText === "'next") {
-      targ.innerHTML = "";
-      targ.className = "server-msg-reconnect video-skip";
-      targ.innerText = "Video skipped.";
-      var msgBuff = document.getElementById("messagebuffer");
-      msgBuff.scrollTop = msgBuff.scrollHeight;
-    } else if (targ.childNodes[2].innerText === "'remove") {
-      targ.innerHTML = "";
-
-      targ.className = "server-msg-reconnect video-remove";
-      targ.style.color = "red";
-      targ.style.borderColor = "red";
-      targ.innerText = "Video removed.";
-
-      var msgBuff = document.getElementById("messagebuffer");
-      msgBuff.scrollTop = msgBuff.scrollHeight;
-    }
   }
 };
 
@@ -108,7 +98,29 @@ var checkForOptions = function(targ) {
     if (username === admin) {
       if (msg === "'sortmode") {
         sortMode = !sortMode;
+        targ.remove();
         console.log("Sort mode: ", sortMode);
+        addBotMsg("Sort Mode: " + sortMode, "yellow");
+      }
+    }
+
+    console.log("username: " + username);
+    if (username === admin || isMod(username)) {
+      console.log("User is admin.");
+      if (msg.includes("'next")) {
+        console.log("Skipping video.");
+        targ.remove();
+        addBotMsg('Video skipped.', 'red');
+      } else if (targ.childNodes[2].innerText === "'remove") {
+        targ.innerHTML = "";
+
+        targ.className = "server-msg-reconnect video-remove";
+        targ.style.color = "red";
+        targ.style.borderColor = "red";
+        targ.innerText = "Video removed.";
+
+        var msgBuff = document.getElementById("messagebuffer");
+        msgBuff.scrollTop = msgBuff.scrollHeight;
       }
     }
 
@@ -272,9 +284,56 @@ var main = function() {
     checkForOptions(msgTarget.childNodes[i]);
   }
 
+  // Add test area
+  var testArea = document.createElement('div');
+  testArea.classList.add('test-area');
+  testArea.innerText = "Test Area. DO NOT MOUSE OVER.";
+  var testImg = document.createElement('img');
+  testImg.src = "https://cdn.instructables.com/FB2/DLT8/I86UGV9U/FB2DLT8I86UGV9U.MEDIUM.gif";
+  testImg.style.visibility = "hidden";
+  testImg.style["z-index"] = 100;
+
+  testArea.addEventListener('mousemove', function(e) {
+    testImg.style.visibility = "visible";
+    testArea.innerText = "";
+    testArea.appendChild(testImg);
+    testImg.style.width = testArea.offsetWidth + "px";
+    testImg.style.height = testArea.offsetHeight + "px";
+    testArea.style.border = "none";
+  });
+  testImg.addEventListener('mousemove', function(e) {
+    testImg.style.visibility = "visible";
+    testArea.innerText = "";
+    testArea.appendChild(testImg);
+    testImg.style.width = testArea.offsetWidth + "px";
+    testImg.style.height = testArea.offsetHeight + "px";
+    testArea.style.border = "none";
+  });
+
+  testArea.addEventListener('mouseout', function(e) {
+    testImg.style.visibility = "hidden";
+    testArea.innerText = "Test Area. DO NOT MOUSE OVER.";
+    testArea.style.border = "2px dotted white";
+  });
+  testImg.addEventListener('mouseout', function(e) {
+    testImg.style.visibility = "hidden";
+    testArea.innerText = "Test Area. DO NOT MOUSE OVER.";
+    testArea.style.border = "2px dotted white";
+  });
+
+  document.querySelector('#leftpane').appendChild(testArea);
+
   // Add any custom CSS
+  // Used over cytube CSS editor so you only have to update one file
   var css = `.user-img:hover {
     filter: grayscale(40%);
+  }
+  .test-area {
+    width: 100%;
+    height: 115px;
+    border: 2px dotted white;
+    text-align: center;
+    font-size: 24px;
   }`;
 
   var cssTag = document.createElement('style');
