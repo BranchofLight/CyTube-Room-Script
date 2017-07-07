@@ -7,6 +7,7 @@ This script adds functionality to any CyTube video room.
 - usernames also displayed beside videos to identify who added what
 - embedded images with large sized previews
 - custom colour mappings for any registered users
+- dice rolling of any side amount
 - ability to add custom "bot"/server messages
 - much more in progress
 
@@ -20,4 +21,5 @@ This script adds functionality to any CyTube video room.
 
 ## Usage
 
-In order to embed an image simply type 'img URL. Note the apostrophe before img. Clicking this image will bring up a larger version. Clicking anywhere removes this preview.
+- **'img URL** - Embeds an image in the chat window. Clicking this image will bring up a larger version. Clicking anywhere removes this preview.
+- **'roll #** - Rolls a die with a number of sides equal to the # given.
