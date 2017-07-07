@@ -1,6 +1,7 @@
 /* TODO:
  * 'next skips next video after previous video would have ended normally
  * 'remove is also broken
+ * 'lead
  * when video moves it loses title
  * Add sort bot
  * bump
@@ -19,7 +20,10 @@ var isMod = function(usr) {
   return mods.indexOf(usr) > -1;
 };
 
-var colourMap = {"sadweeaboo2" : "red", "RyanGoslingTwerk" : "#ff66cc"};
+var colourMap = {
+  "sadweeaboo2" : "red",
+  "RyanGoslingTwerk" : "#ff66cc"
+};
 
 var addVideoTitleToTarget = function(targ) {
   if (targ !== undefined) {
@@ -124,9 +128,21 @@ var checkForOptions = function(targ) {
       }
     }
 
+    if (msg.includes("'roll")) {
+      var maxRoll = msg.substr("'roll ".length);
+      console.log("Roll: " + parseInt(maxRoll));
+      if (!isNaN(maxRoll) && maxRoll >= 1) {
+        maxRoll = Math.trunc(maxRoll);
+        var roll = Math.random() * (maxRoll - 1) + 1;
+        roll = Math.round(roll);
+        targ.remove();
+        addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, '#0f8c1f');
+      }
+    }
+
     if (msg.includes("'img")) {
       console.log("'img detected.");
-      var url = targ.childNodes[2].innerText.substr("'img".length);
+      var url = msg.substr("'img".length);
       console.log("URL: "+url);
 
       var buffer = document.querySelector('#messagebuffer');
@@ -293,15 +309,7 @@ var main = function() {
   testImg.style.visibility = "hidden";
   testImg.style["z-index"] = 100;
 
-  testArea.addEventListener('mousemove', function(e) {
-    testImg.style.visibility = "visible";
-    testArea.innerText = "";
-    testArea.appendChild(testImg);
-    testImg.style.width = testArea.offsetWidth + "px";
-    testImg.style.height = testArea.offsetHeight + "px";
-    testArea.style.border = "none";
-  });
-  testImg.addEventListener('mousemove', function(e) {
+  testArea.addEventListener('mouseenter', function(e) {
     testImg.style.visibility = "visible";
     testArea.innerText = "";
     testArea.appendChild(testImg);
@@ -310,11 +318,6 @@ var main = function() {
     testArea.style.border = "none";
   });
 
-  testArea.addEventListener('mouseout', function(e) {
-    testImg.style.visibility = "hidden";
-    testArea.innerText = "Test Area. DO NOT MOUSE OVER.";
-    testArea.style.border = "2px dotted white";
-  });
   testImg.addEventListener('mouseout', function(e) {
     testImg.style.visibility = "hidden";
     testArea.innerText = "Test Area. DO NOT MOUSE OVER.";
