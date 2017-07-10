@@ -2,6 +2,7 @@
  * 'next skips next video after previous video would have ended normally
  * 'remove is also broken
  * 'lead
+ * 'roll should have lock ala bot
  * when video moves it loses title
  * Add sort bot
  * bump
@@ -64,6 +65,11 @@ var addNameToTarget = function(targ) {
   }
 };
 
+var sendMsg = function(msg) {
+  document.querySelector('#chatline').value = msg;
+  document.querySelector('#chatbtn').click();
+};
+
 var checkForOptions = function(targ) {
   if (targ.className.indexOf("video-skip") > -1) {
     var videoQueue = document.getElementById('queue');
@@ -98,6 +104,9 @@ var checkForOptions = function(targ) {
   if (targ.childNodes[2] !== undefined) {
     var msg = targ.childNodes[2].innerText;
     var username = targ.className.substring(("chat-msg-").length, targ.className.length);
+    var scriptUser = document.querySelector('#welcome').innerText;
+    scriptUser = scriptUser.substring(scriptUser.indexOf(',')+2);
+    console.log("Script user: " + scriptUser);
 
     if (username === admin) {
       if (msg === "'sortmode") {
@@ -129,15 +138,36 @@ var checkForOptions = function(targ) {
     }
 
     if (msg.includes("'roll")) {
-      var maxRoll = msg.substr("'roll ".length);
-      console.log("Roll: " + parseInt(maxRoll));
-      if (!isNaN(maxRoll) && maxRoll >= 1) {
-        maxRoll = Math.trunc(maxRoll);
-        var roll = Math.random() * (maxRoll - 1) + 1;
-        roll = Math.round(roll);
+      if (scriptUser === username) {
+        // This entity sent the roll request
+        var maxRoll = msg.substr("'roll ".length);
+        console.log("Roll: " + parseInt(maxRoll));
+        if (!isNaN(maxRoll) && maxRoll >= 1) {
+          maxRoll = Math.trunc(maxRoll);
+          var roll = Math.random() * (maxRoll - 1) + 1;
+          roll = Math.round(roll);
+          targ.remove();
+          addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, '#0f8c1f');
+          sendMsg(JSON.stringify({'roll': roll, 'maxRoll': maxRoll}));
+        }
+      } else {
         targ.remove();
-        addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, '#0f8c1f');
       }
+    }
+
+    try {
+      var json = JSON.parse(msg);
+      if (username !== scriptUser) {
+        if (json !== undefined && json.roll !== undefined && json.maxRoll !== undefined) {
+          addBotMsg(username + " rolled a " + json.roll + " on a d" + json.maxRoll, '0f8c1f');
+          targ.remove();
+        }
+      } else {
+        // Hasn't failed yet. Must be JSON.
+        targ.remove();
+      }
+    } catch (error) {
+      // No need to catch. We just cant be sure if msg is JSON or not any other way.
     }
 
     if (msg.includes("'img")) {
