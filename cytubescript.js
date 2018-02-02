@@ -14,7 +14,6 @@
  */
 var admin = "geoffkeighley";
 var mods = ["Fitzthistlewits"];
-var sortMode = false;
 
 var isMod = function(usr) {
   return mods.indexOf(usr) > -1;
@@ -23,6 +22,12 @@ var isMod = function(usr) {
 var colourMap = {
   "sadweeaboo2" : "red",
   "RyanGoslingTwerk" : "#ff66cc"
+};
+
+var msgColours = {
+  "success": "#0f8c1f",
+  "error": "red",
+  "general": "yellow",
 };
 
 var addVideoTitleToTarget = function(targ) {
@@ -66,10 +71,18 @@ var addNameToTarget = function(targ) {
 
 var sendMsg = function(msg) {
   document.querySelector('#chatline').value = msg;
-  document.querySelector('#chatbtn').click();
+  document.querySelector('#chatline').focus();
+  // Due to a bug outside of my control, this is how a enter press must be dispatched
+  var enterEvent = new Event('keydown');
+  enterEvent.keyCode = 13;
+  document.querySelector('#chatline').dispatchEvent(enterEvent);
 };
 
-var checkForOptions = function(targ) {
+// isInit (optional) -> defaults to false
+//                   -> true: will ignore certain checks (such as 'roll)
+var checkForOptions = function(targ, isInit) {
+  if (isInit === undefined) isInit = false;
+
   if (targ.className.indexOf("video-skip") > -1) {
     var videoQueue = document.getElementById('queue');
     var videoTitleList = videoQueue.getElementsByTagName("li");
@@ -103,26 +116,15 @@ var checkForOptions = function(targ) {
   if (targ.childNodes[2] !== undefined) {
     var msg = targ.childNodes[2].innerText;
     var username = targ.className.substring(("chat-msg-").length, targ.className.length);
-    var scriptUser = document.querySelector('#welcome').innerText;
-    scriptUser = scriptUser.substring(scriptUser.indexOf(',')+2);
-    console.log("Script user: " + scriptUser);
 
-    if (username === admin) {
-      if (msg === "'sortmode") {
-        sortMode = !sortMode;
-        targ.remove();
-        console.log("Sort mode: ", sortMode);
-        addBotMsg("Sort Mode: " + sortMode, "yellow");
-      }
-    }
+    var w = document.querySelector('#welcome');
+    var scriptUser = (w === null) ? undefined : w.innerText.substring(w.innerText.indexOf(',')+2);
 
-    console.log("username: " + username);
     if (username === admin || isMod(username)) {
-      console.log("User is admin.");
       if (msg.includes("'next")) {
         console.log("Skipping video.");
         targ.remove();
-        addBotMsg('Video skipped.', 'red');
+        addBotMsg('Video skipped.', msgColours.error);
       } else if (targ.childNodes[2].innerText === "'remove") {
         targ.innerHTML = "";
 
@@ -136,29 +138,55 @@ var checkForOptions = function(targ) {
       }
     }
 
-    // if (msg.includes("'roll")) {
-    //   targ.remove(); // Handled elsewhere
-    // }
-
-    try {
-      var json = JSON.parse(msg);
-      if (username !== scriptUser) {
-        if (json !== undefined && json.roll !== undefined && json.maxRoll !== undefined) {
-          addBotMsg(username + " rolled a " + json.roll + " on a d" + json.maxRoll, '0f8c1f');
+    // Cannot be init as this will create a feedback loop
+    if (msg.includes("'roll")) {
+      if (username === scriptUser && !isInit) {
+        var maxRoll = msg.substr("'roll ".length);
+        console.log("Roll: " + parseInt(maxRoll));
+        if (!isNaN(maxRoll) && maxRoll >= 1 && maxRoll <= 10000) {
+          maxRoll = Math.trunc(maxRoll);
+          var roll = Math.random() * (maxRoll - 1) + 1;
+          roll = Math.round(roll);
           targ.remove();
+          addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, msgColours.success);
+          sendMsg(JSON.stringify({'roll': roll, 'maxRoll': maxRoll}));
         }
       } else {
-        // Hasn't failed yet. Must be JSON.
         targ.remove();
       }
-    } catch (error) {
-      // No need to catch. We just cant be sure if msg is JSON or not any other way.
+    }
+
+    // Returns an object with the JSON and the process type
+    // or undefined if not valid JSON
+    var validateJSON = function(j) {
+      try {
+        var json = JSON.parse(j);
+      } catch (error) {
+        return undefined;
+      }
+
+      json = {'json': json, 'type': null};
+
+      if (json.json.roll !== undefined && json.json.maxRoll !== undefined) {
+        json.type = 'roll';
+      }
+
+      return json;
+    };
+
+    var json = validateJSON(msg);
+    if (json.type !== null) {
+      if (json.type === "roll") {
+        if (username !== scriptUser) {
+          addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
+        }
+
+        targ.remove();
+      }
     }
 
     if (msg.includes("'img")) {
-      console.log("'img detected.");
       var url = msg.substr("'img".length);
-      console.log("URL: "+url);
 
       var buffer = document.querySelector('#messagebuffer');
 
@@ -240,13 +268,6 @@ var setUserColour = function(targ) {
   }
 };
 
-var sortBot = function() {
-  // Go through videos and find all users (don't trust userlist!!)
-  // Sort these users alphabettically
-  // Sort videos using users (explained below)
-  // --- user1, user2, user3, userx, user1, user2, userx, etc
-};
-
 var main = function() {
   // select the target node
   var videoTitleTarget = document.getElementById('queue');
@@ -275,17 +296,14 @@ var main = function() {
     var videoItem = mutations[0].target.getElementsByTagName("li");
     for (var i = 0; i < mutations.length; i++) {
       // Modifies the last x (mutations.length) video titles
-      console.log("Video observer.");
       addVideoTitleToTarget(videoItem[videoItem.length-1-i]);
     }
-    sortBot();
   });
 
   var nameMsgObserver = new MutationObserver(function(mutations) {
     var msgItem = mutations[0].target.getElementsByTagName("div");
     for (var i = 0; i < mutations.length; i++) {
       // Modifies the last x (mutations.length)
-      console.log("Message observer.");
       // Visual / DOM changes
       addNameToTarget(msgItem[msgItem.length-1-i]);
       // Functionality changes
@@ -296,7 +314,6 @@ var main = function() {
   var usrListObserver = new MutationObserver(function(mutations) {
     var usrItem = mutations[0].target.getElementsByClassName("userlist_item");
     usrItem = usrItem[usrItem.length-1];
-    console.log("User observer.");
     setUserColour(usrItem);
   });
 
@@ -312,10 +329,14 @@ var main = function() {
 
   // Check all messages in history
   for (let i = 0; i < msgTarget.childNodes.length; i++) {
-    checkForOptions(msgTarget.childNodes[i]);
+    checkForOptions(msgTarget.childNodes[i], true);
   }
 
-  // Add test area
+  // Remove old test area
+  if (document.querySelector('.test-area') !== null) {
+    document.querySelector('.test-area').remove();
+  }
+
   var testArea = document.createElement('div');
   testArea.classList.add('test-area');
   testArea.innerText = "Test Area. DO NOT MOUSE OVER.";
@@ -340,12 +361,14 @@ var main = function() {
   });
 
   document.querySelector('#leftpane').appendChild(testArea);
-  var bannerDiv = document.createElement('div');
-  bannerDiv.classList.add('banner');
-  var bannerImg = document.createElement('img');
-  bannerImg.src = "http://i.imgur.com/b2O7hQq.png";
-  bannerDiv.appendChild(bannerImg);
-  document.querySelector('.container-fluid').insertBefore(bannerDiv, document.querySelector('#announcements'));
+
+  // Removed for now
+  // var bannerDiv = document.createElement('div');
+  // bannerDiv.classList.add('banner');
+  // var bannerImg = document.createElement('img');
+  // bannerImg.src = "http://i.imgur.com/b2O7hQq.png";
+  // bannerDiv.appendChild(bannerImg);
+  // document.querySelector('.container-fluid').insertBefore(bannerDiv, document.querySelector('#announcements'));
 
   // Add any custom CSS
   // Used over cytube CSS editor so you only have to update one file
@@ -378,58 +401,3 @@ var main = function() {
 
   document.querySelector('head').appendChild(cssTag);
 }();
-
-var botChecks = function(msg) {
-  if (msg.includes("'roll")) {
-    var maxRoll = msg.substr("'roll ".length);
-    console.log("Roll: " + parseInt(maxRoll));
-    if (!isNaN(maxRoll) && maxRoll >= 1) {
-      maxRoll = Math.trunc(maxRoll);
-      var roll = Math.random() * (maxRoll - 1) + 1;
-      roll = Math.round(roll);
-      targ.remove();
-      addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, '#0f8c1f');
-      sendMsg(JSON.stringify({'roll': roll, 'maxRoll': maxRoll}));
-    }
-  }
-};
-
-var getThisUsrMsg = function() {
-  var allMsgs = document.querySelector('#messagebuffer').childNodes;
-  var scriptUser = document.querySelector('#welcome').innerText;
-  scriptUser = scriptUser.substring(scriptUser.indexOf(',')+2);
-
-  for (let i = allMsgs.length-1; i >= 0; i--) {
-    var msgDiv = allMsgs[i];
-    var msg = msgDiv.childNodes[2].innerText;
-    console.log("Message from listener: " + msg);
-    var username = msgDiv.className.substring(("chat-msg-").length, msgDiv.className.length);
-    if (username === scriptUser) {
-      if (msg.includes("'roll")) {
-        msgDiv.remove();
-      }
-      break;
-    }
-  }
-};
-
-// NEW METHOD OF NON-LOAD DETECTION: has user sent a message yet? (enter/send) flag
-// This flag is checked in the mutation observer
-// This may have timing issues if the first thing entered is a 'roll or similar bot msg
-
-// user sends 'roll 20 <- built in feature
-// every user, including sender, d sure elete it <- done in mutation observer for non-senders, enter/send for sender
-// sender script sends JSON to everyone <- done via enter/send
-// everyone, including sender, parse this as a bot message <- mutation observer
-
-document.querySelector('#chatline').addEventListener('keydown', function(e) {
-  if (e.key === "Enter") {
-    setTimeout(function() {
-      getThisUsrMsg();
-    }, 50);
-  }
-});
-
-document.querySelector('#chatbtn').addEventListener('click', function(e) {
-  getThisUsrMsg();
-});
