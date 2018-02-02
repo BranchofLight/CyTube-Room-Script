@@ -1,13 +1,12 @@
 /* TODO:
  * 'next skips next video after previous video would have ended normally
+ * reloading causes 'roll to resend JSON messages -> attach roll to click/enter listeners
  * 'remove is also broken
  * 'lead
- * 'roll should have lock ala bot
  * when video moves it loses title
  * Add sort bot
  * bump
  * bot responses
- * bot can work by creating a lock so that multiple scripts arent exectued at the same time
  */
 
 /*
@@ -137,23 +136,9 @@ var checkForOptions = function(targ) {
       }
     }
 
-    if (msg.includes("'roll")) {
-      if (scriptUser === username) {
-        // This entity sent the roll request
-        var maxRoll = msg.substr("'roll ".length);
-        console.log("Roll: " + parseInt(maxRoll));
-        if (!isNaN(maxRoll) && maxRoll >= 1) {
-          maxRoll = Math.trunc(maxRoll);
-          var roll = Math.random() * (maxRoll - 1) + 1;
-          roll = Math.round(roll);
-          targ.remove();
-          addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, '#0f8c1f');
-          sendMsg(JSON.stringify({'roll': roll, 'maxRoll': maxRoll}));
-        }
-      } else {
-        targ.remove();
-      }
-    }
+    // if (msg.includes("'roll")) {
+    //   targ.remove(); // Handled elsewhere
+    // }
 
     try {
       var json = JSON.parse(msg);
@@ -393,3 +378,58 @@ var main = function() {
 
   document.querySelector('head').appendChild(cssTag);
 }();
+
+var botChecks = function(msg) {
+  if (msg.includes("'roll")) {
+    var maxRoll = msg.substr("'roll ".length);
+    console.log("Roll: " + parseInt(maxRoll));
+    if (!isNaN(maxRoll) && maxRoll >= 1) {
+      maxRoll = Math.trunc(maxRoll);
+      var roll = Math.random() * (maxRoll - 1) + 1;
+      roll = Math.round(roll);
+      targ.remove();
+      addBotMsg(username + " rolled a " + roll + " on a d" + maxRoll, '#0f8c1f');
+      sendMsg(JSON.stringify({'roll': roll, 'maxRoll': maxRoll}));
+    }
+  }
+};
+
+var getThisUsrMsg = function() {
+  var allMsgs = document.querySelector('#messagebuffer').childNodes;
+  var scriptUser = document.querySelector('#welcome').innerText;
+  scriptUser = scriptUser.substring(scriptUser.indexOf(',')+2);
+
+  for (let i = allMsgs.length-1; i >= 0; i--) {
+    var msgDiv = allMsgs[i];
+    var msg = msgDiv.childNodes[2].innerText;
+    console.log("Message from listener: " + msg);
+    var username = msgDiv.className.substring(("chat-msg-").length, msgDiv.className.length);
+    if (username === scriptUser) {
+      if (msg.includes("'roll")) {
+        msgDiv.remove();
+      }
+      break;
+    }
+  }
+};
+
+// NEW METHOD OF NON-LOAD DETECTION: has user sent a message yet? (enter/send) flag
+// This flag is checked in the mutation observer
+// This may have timing issues if the first thing entered is a 'roll or similar bot msg
+
+// user sends 'roll 20 <- built in feature
+// every user, including sender, d sure elete it <- done in mutation observer for non-senders, enter/send for sender
+// sender script sends JSON to everyone <- done via enter/send
+// everyone, including sender, parse this as a bot message <- mutation observer
+
+document.querySelector('#chatline').addEventListener('keydown', function(e) {
+  if (e.key === "Enter") {
+    setTimeout(function() {
+      getThisUsrMsg();
+    }, 50);
+  }
+});
+
+document.querySelector('#chatbtn').addEventListener('click', function(e) {
+  getThisUsrMsg();
+});
