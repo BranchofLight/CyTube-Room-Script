@@ -50,7 +50,7 @@ var addBotMsg = function(msg, colour) {
 };
 
 var addNameToTarget = function(targ) {
-  var username = targ.className.substring(("chat-msg-").length, targ.className.length);
+  var username = targ.className.substring("chat-msg-".length, targ.className.length);
   if (targ.childNodes.length < 3 && targ.className.indexOf("server-msg") < 0 && targ.className.indexOf("\\$server\\$") < 0) {
     var span = document.createElement("SPAN");
     span.innerHTML = "<strong class=\"username\">" + username + ": </strong>";
@@ -175,12 +175,16 @@ var checkForOptions = function(targ, isInit) {
     };
 
     var json = validateJSON(msg);
-    if (json.type !== null) {
-      if (json.type === "roll") {
-        if (username !== scriptUser) {
-          addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
-        }
+    if (json !== undefined && json.type !== null) {
+      if (!isInit) {
+        if (json.type === "roll") {
+          if (username !== scriptUser) {
+            addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
+          }
 
+          targ.remove();
+        }
+      } else {
         targ.remove();
       }
     }
@@ -322,15 +326,21 @@ var main = function() {
   var nameMsgConfig = {childList : true};
   var usrListConfig = {childList : true};
 
+  // Check all messages in history
+  // May delete some children, check for this
+  for (let i = 0; i < msgTarget.childNodes.length;) {
+    debugger;
+    var len = msgTarget.childNodes.length;
+    checkForOptions(msgTarget.childNodes[i], true);
+    if (msgTarget.childNodes.length === len) {
+      i += 1;
+    }
+  }
+
   // pass in the target node, as well as the observer options
   videoTitleObserver.observe(videoTitleTarget, videoTitleConfig);
   nameMsgObserver.observe(msgTarget, nameMsgConfig);
   usrListObserver.observe(usrTarget, usrListConfig);
-
-  // Check all messages in history
-  for (let i = 0; i < msgTarget.childNodes.length; i++) {
-    checkForOptions(msgTarget.childNodes[i], true);
-  }
 
   // Remove old test area
   if (document.querySelector('.test-area') !== null) {
