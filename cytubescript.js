@@ -1,8 +1,5 @@
 /* TODO:
  * 'next skips next video after previous video would have ended normally
- * reloading causes 'roll to resend JSON messages -> attach roll to click/enter listeners
- * 'remove is also broken
- * 'lead
  * when video moves it loses title
  * Add sort bot
  * bump
@@ -120,26 +117,8 @@ var checkForOptions = function(targ, isInit) {
     var w = document.querySelector('#welcome');
     var scriptUser = (w === null) ? undefined : w.innerText.substring(w.innerText.indexOf(',')+2);
 
-    if (username === admin || isMod(username)) {
-      if (msg.includes("'next")) {
-        console.log("Skipping video.");
-        targ.remove();
-        addBotMsg('Video skipped.', msgColours.error);
-      } else if (targ.childNodes[2].innerText === "'remove") {
-        targ.innerHTML = "";
-
-        targ.className = "server-msg-reconnect video-remove";
-        targ.style.color = "red";
-        targ.style.borderColor = "red";
-        targ.innerText = "Video removed.";
-
-        var msgBuff = document.getElementById("messagebuffer");
-        msgBuff.scrollTop = msgBuff.scrollHeight;
-      }
-    }
-
     // Cannot be init as this will create a feedback loop
-    if (msg.includes("'roll")) {
+    if (msg.indexOf("'roll") === 0) {
       if (username === scriptUser && !isInit) {
         var maxRoll = msg.substr("'roll ".length);
         console.log("Roll: " + parseInt(maxRoll));
@@ -154,20 +133,37 @@ var checkForOptions = function(targ, isInit) {
       } else {
         targ.remove();
       }
-    } else if (msg.includes("'lead") && isMod(username)) {// && isMod(username) && !isInit && scriptUser === username) {
+    } else if (msg.indexOf("'lead") === 0 && isMod(username)) {
       var userList = document.querySelector('#userlist');
-      var btnClicked = undefined;
       if (!isInit && scriptUser === username) {
         for (let i = 0; i < userList.childNodes.length; i++) {
           if (userList.childNodes[i].querySelector('.userlist_owner').innerText === username) {
-            btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
+            var   btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
             userList.childNodes[i].querySelectorAll('button')[1].click();
+            var m = (btnClicked.includes("Give")) ? "has taken lead" : "has given up lead";
+            sendMsg(JSON.stringify({msg: username + " " + m, colour: msgColours.general}));
             break;
           }
         }
+      }
 
-        var m = (btnClicked.includes("Give")) ? "has taken lead" : "has given up lead";
-        sendMsg(JSON.stringify({msg: username + " " + m, colour: msgColours.general}));
+      targ.remove();
+    } else if (msg.indexOf("'skip") === 0 && isMod(username)) {
+      var videoList = document.querySelector('#queue');
+      if (!isInit && scriptUser === username && videoList.childNodes.length > 1) {
+        var nextVideo = document.querySelector('.queue_active').nextSibling;
+        if (nextVideo === null) {
+          nextVideo = document.querySelector('#queue').childNodes[0];
+        }
+
+        var btnClicked = nextVideo.querySelector('.qbtn-play');
+        // Possible buttons are hidden
+        if (btnClicked !== null) {
+          btnClicked.click();
+          sendMsg(JSON.stringify({msg: username + " skipped video", colour: msgColours.general}));
+        } else {
+          sendMsg(JSON.stringify({msg: username + " failed to skip - are buttons hidden?", colour: msgColours.failed}));
+        }
       }
 
       targ.remove();
@@ -204,7 +200,6 @@ var checkForOptions = function(targ, isInit) {
           targ.remove();
         } else if (json.type === 'msg') {
           addBotMsg(json.json.msg, json.json.colour);
-
           targ.remove();
         }
       } else {
@@ -212,7 +207,7 @@ var checkForOptions = function(targ, isInit) {
       }
     }
 
-    if (msg.includes("'img")) {
+    if (msg.indexOf("'img") === 0) {
       var url = msg.substr("'img".length);
 
       var buffer = document.querySelector('#messagebuffer');
