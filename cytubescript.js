@@ -16,7 +16,7 @@ var admin = "geoffkeighley";
 var mods = ["Fitzthistlewits"];
 
 var isMod = function(usr) {
-  return mods.indexOf(usr) > -1;
+  return mods.indexOf(usr) > -1 || usr === admin;
 };
 
 var colourMap = {
@@ -154,6 +154,23 @@ var checkForOptions = function(targ, isInit) {
       } else {
         targ.remove();
       }
+    } else if (msg.includes("'lead") && isMod(username)) {// && isMod(username) && !isInit && scriptUser === username) {
+      var userList = document.querySelector('#userlist');
+      var btnClicked = undefined;
+      if (!isInit && scriptUser === username) {
+        for (let i = 0; i < userList.childNodes.length; i++) {
+          if (userList.childNodes[i].querySelector('.userlist_owner').innerText === username) {
+            btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
+            userList.childNodes[i].querySelectorAll('button')[1].click();
+            break;
+          }
+        }
+
+        var m = (btnClicked.includes("Give")) ? "has taken lead" : "has given up lead";
+        sendMsg(JSON.stringify({msg: username + " " + m, colour: msgColours.general}));
+      }
+
+      targ.remove();
     }
 
     // Returns an object with the JSON and the process type
@@ -169,6 +186,8 @@ var checkForOptions = function(targ, isInit) {
 
       if (json.json.roll !== undefined && json.json.maxRoll !== undefined) {
         json.type = 'roll';
+      } else if (json.json.msg !== undefined && json.json.colour !== undefined) {
+        json.type = 'msg';
       }
 
       return json;
@@ -181,6 +200,10 @@ var checkForOptions = function(targ, isInit) {
           if (username !== scriptUser) {
             addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
           }
+
+          targ.remove();
+        } else if (json.type === 'msg') {
+          addBotMsg(json.json.msg, json.json.colour);
 
           targ.remove();
         }
@@ -329,7 +352,6 @@ var main = function() {
   // Check all messages in history
   // May delete some children, check for this
   for (let i = 0; i < msgTarget.childNodes.length;) {
-    debugger;
     var len = msgTarget.childNodes.length;
     checkForOptions(msgTarget.childNodes[i], true);
     if (msgTarget.childNodes.length === len) {
