@@ -1,5 +1,10 @@
 /* TODO:
+ * marc cant use lead - ff? make new mod for devchannel to test
  * when video moves it loses title
+ * pause / play
+ * spin
+ * fast
+ * free photo API that auto embeded first search result??
  * Add sort bot
  * bump
  * bot responses
@@ -9,6 +14,7 @@
  * Globals
  */
 var admin = "geoffkeighley";
+// Note: must add mod to channel first
 var mods = ["Fitzthistlewits"];
 
 var isMod = function(usr) {
@@ -136,8 +142,8 @@ var checkForOptions = function(targ, isInit) {
       var userList = document.querySelector('#userlist');
       if (!isInit && scriptUser === username) {
         for (let i = 0; i < userList.childNodes.length; i++) {
-          if (userList.childNodes[i].querySelector('.userlist_owner').innerText === username) {
-            var   btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
+          if (userList.childNodes[i].innerText === username) {
+            var btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
             userList.childNodes[i].querySelectorAll('button')[1].click();
             var m = (btnClicked.includes("Give")) ? "has taken lead" : "has given up lead";
             sendMsg(JSON.stringify({msg: username + " " + m, colour: msgColours.general}));
