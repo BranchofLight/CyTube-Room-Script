@@ -1,5 +1,4 @@
 /* TODO:
- * marc cant use lead - ff? make new mod for devchannel to test
  * when video moves it loses title
  * pause / play
  * spin
@@ -85,35 +84,6 @@ var sendMsg = function(msg) {
 var checkForOptions = function(targ, isInit) {
   if (isInit === undefined) isInit = false;
 
-  if (targ.className.indexOf("video-skip") > -1) {
-    var videoQueue = document.getElementById('queue');
-    var videoTitleList = videoQueue.getElementsByTagName("li");
-
-    var nextVideo = undefined;
-    for (var i = 0; i < videoTitleList.length; i++) {
-      if (videoTitleList[i].className.indexOf("queue_active") > -1) {
-        if (i+1 < videoTitleList.length) {
-          nextVideo = videoTitleList[i+1];
-          break;
-        } else {
-          nextVideo = videoTitleList[0];
-          break;
-        }
-      }
-    }
-
-    if (nextVideo !== undefined) {
-      var nextVideoButtons = nextVideo.getElementsByTagName("button");
-      // First button is play
-      nextVideoButtons[0].click();
-    }
-  } else if (targ.className.indexOf("video-remove") > -1) {
-    var videoQueue = document.getElementById('queue');
-    var currentVideo = videoQueue.getElementsByClassName("queue_active")[0];
-
-    currentVideo.getElementsByTagName("button")[3].click();
-  }
-
   // Check vanilla message
   if (targ.childNodes[2] !== undefined) {
     var msg = targ.childNodes[2].innerText;
@@ -172,47 +142,7 @@ var checkForOptions = function(targ, isInit) {
       }
 
       targ.remove();
-    }
-
-    // Returns an object with the JSON and the process type
-    // or undefined if not valid JSON
-    var validateJSON = function(j) {
-      try {
-        var json = JSON.parse(j);
-      } catch (error) {
-        return undefined;
-      }
-
-      json = {'json': json, 'type': null};
-
-      if (json.json.roll !== undefined && json.json.maxRoll !== undefined) {
-        json.type = 'roll';
-      } else if (json.json.msg !== undefined && json.json.colour !== undefined) {
-        json.type = 'msg';
-      }
-
-      return json;
-    };
-
-    var json = validateJSON(msg);
-    if (json !== undefined && json.type !== null) {
-      if (!isInit) {
-        if (json.type === "roll") {
-          if (username !== scriptUser) {
-            addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
-          }
-
-          targ.remove();
-        } else if (json.type === 'msg') {
-          addBotMsg(json.json.msg, json.json.colour);
-          targ.remove();
-        }
-      } else {
-        targ.remove();
-      }
-    }
-
-    if (msg.indexOf("'img") === 0) {
+    } else if (msg.indexOf("'img") === 0) {
       var url = msg.substr("'img".length);
 
       var buffer = document.querySelector('#messagebuffer');
@@ -284,6 +214,44 @@ var checkForOptions = function(targ, isInit) {
         imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
         imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
       };
+    }
+
+    // Returns an object with the JSON and the process type
+    // or undefined if not valid JSON
+    var validateJSON = function(j) {
+      try {
+        var json = JSON.parse(j);
+      } catch (error) {
+        return undefined;
+      }
+
+      json = {'json': json, 'type': null};
+
+      if (json.json.roll !== undefined && json.json.maxRoll !== undefined) {
+        json.type = 'roll';
+      } else if (json.json.msg !== undefined && json.json.colour !== undefined) {
+        json.type = 'msg';
+      }
+
+      return json;
+    };
+
+    var json = validateJSON(msg);
+    if (json !== undefined && json.type !== null) {
+      if (!isInit) {
+        if (json.type === "roll") {
+          if (username !== scriptUser) {
+            addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
+          }
+
+          targ.remove();
+        } else if (json.type === 'msg') {
+          addBotMsg(json.json.msg, json.json.colour);
+          targ.remove();
+        }
+      } else {
+        targ.remove();
+      }
     }
   }
 };
