@@ -1,6 +1,6 @@
 # CyTube Room Script
 
-This script adds functionality to any CyTube video room. 
+This script adds functionality to any CyTube video room.
 
 ## Feature List
 - Usernames are displayed on all sent messages for easier identification.
@@ -21,5 +21,9 @@ This script adds functionality to any CyTube video room.
 
 ## Usage
 
-- **'img URL** - Embeds an image in the chat window. Clicking this image will bring up a larger version. Clicking anywhere removes this preview.
-- **'roll #** - Rolls a die with a number of sides equal to the # given.
+| Keyword | Options | Description                                                 | Example                              |
+| ------- | ------- | ----------------------------------------------------------- | ------------------------------------ |
+| 'img    | URL     | Embeds an image in the chat window. Click image to enlarge. | 'img https://i.imgur.com/FaMUWvF.jpg |
+| 'roll   | Number  | Rolls a die with a number of sides equal to input given.    | 'roll 6                              |
+| 'skip   |         | A mod and admin tool to skip the current video.             | 'skip                                |
+| 'lead   |         | Takes or removes lead on yourself. Mod / admin only.        | 'lead                                |

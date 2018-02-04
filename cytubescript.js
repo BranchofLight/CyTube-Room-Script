@@ -1,5 +1,4 @@
 /* TODO:
- * 'next skips next video after previous video would have ended normally
  * when video moves it loses title
  * Add sort bot
  * bump
