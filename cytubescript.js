@@ -1,6 +1,9 @@
 /* TODO:
- * when video moves it loses title
- * pause / play
+ * Added by shows correct colour (or none if no colour exist in map)
+ * Investigate video observer and use mutations correctly
+ * Add "tab notification" to new messages
+ * pause / play (document.querySelector('iframe').contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');)
+ *   -> will have to store current state somewhere - may be tricky - could just separate pause and play commands
  * spin
  * fast
  * free photo API that auto embeded first search result??
@@ -283,12 +286,16 @@ var main = function() {
   }
 
   var videoTitleObserver = new MutationObserver(function(mutations) {
-    // Which mutation is used is not important
-    var videoItem = mutations[0].target.getElementsByTagName("li");
+    // for (var i = 0; i < mutations.length; i++) {
+    //   if (mutations[i].target.className.includes('pluid')) {
+    //     addVideoTitleToTarget(mutations[i].target);
+    //   }
+    // }
 
-    for (var i = 0; i < mutations.length; i++) {
-      // Modifies the last x (mutations.length) video titles
-      addVideoTitleToTarget(videoItem[videoItem.length-1-i]);
+    // Mutations causing issues - temporary fix
+    var videos = document.querySelectorAll('.queue_entry');
+    for (let i = 0; i < videos.length; i++) {
+      addVideoTitleToTarget(videos[i]);
     }
   });
 
@@ -366,6 +373,31 @@ var main = function() {
   // bannerImg.src = "http://i.imgur.com/b2O7hQq.png";
   // bannerDiv.appendChild(bannerImg);
   // document.querySelector('.container-fluid').insertBefore(bannerDiv, document.querySelector('#announcements'));
+
+  // Remove "advertisement" if it exists - allows adding of potentially updated one if code changes
+  if (document.querySelector('a[href="https://github.com/BranchofLight/CyTube-Room-Script"]') !== null) {
+    document.querySelector('a[href="https://github.com/BranchofLight/CyTube-Room-Script"]').remove();
+  }
+
+  if (document.querySelector('.credit').querySelector('span') !== null) {
+    document.querySelector('.credit').querySelector('span').remove();
+  }
+
+  // Add "advertisement" for script
+  var adArea = document.querySelector('.credit');
+  var adLink = document.createElement('a');
+  adLink.innerText = "Get This Room Script";
+  adLink.href = "https://github.com/BranchofLight/CyTube-Room-Script";
+  adLink.target = "_blank";
+  adLink.style.color = "#2aabf4";
+  adLink.style['font-size'] = '16px';
+  adLink.style['font-weight'] = 'bold';
+
+  adArea.insertBefore(adLink, adArea.childNodes[adArea.childNodes.length-1]);
+
+  var space  = document.createElement('span');
+  space.innerText = " · ";
+  adArea.insertBefore(space, adLink);
 
   // Add any custom CSS
   // Used over cytube CSS editor so you only have to update one file
