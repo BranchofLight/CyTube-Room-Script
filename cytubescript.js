@@ -32,10 +32,10 @@ var msgColours = {
 };
 
 var addVideoTitleToTarget = function(targ) {
-  if (targ !== undefined) {
-    var videoTitle = targ.firstChild.innerText;
-    if (videoTitle.indexOf(targ.title) < 0) {
-        targ.firstChild.innerText += " " + targ.title;
+  if (targ.querySelector('.qe_title') !== null && targ.title !== undefined && targ.querySelector('.qe_title').innerText.length > 0 && !targ.className.includes('ui-')) {
+    var videoTitle = targ.querySelector('.qe_title').innerText;
+    if (!videoTitle.includes(targ.title)) {
+      targ.querySelector('.qe_title').innerText += " " + targ.title;
     }
   }
 };
@@ -72,7 +72,6 @@ var addNameToTarget = function(targ) {
 
 var sendMsg = function(msg) {
   document.querySelector('#chatline').value = msg;
-  document.querySelector('#chatline').focus();
   // Due to a bug outside of my control, this is how a enter press must be dispatched
   var enterEvent = new Event('keydown');
   enterEvent.keyCode = 13;
@@ -264,12 +263,10 @@ var setUserColour = function(targ) {
 };
 
 var main = function() {
-  // select the target node
   var videoTitleTarget = document.getElementById('queue');
   var msgTarget = document.getElementById("messagebuffer");
   var usrTarget = document.getElementById("userlist");
 
-  // Probably never going to do anything due to DOM loading but here just in case
   var videoList = videoTitleTarget.getElementsByTagName("li");
   for (var i = 0; i < videoList.length; i++) {
     addVideoTitleToTarget(videoList[i]);
@@ -288,10 +285,16 @@ var main = function() {
   // create an observer instance
   var videoTitleObserver = new MutationObserver(function(mutations) {
     // Which mutation is used is not important
-    var videoItem = mutations[0].target.getElementsByTagName("li");
-    for (var i = 0; i < mutations.length; i++) {
+    // var videoItem = mutations[0].target.getElementsByTagName("li");
+
+    // for (var i = 0; i < mutations.length; i++) {
       // Modifies the last x (mutations.length) video titles
-      addVideoTitleToTarget(videoItem[videoItem.length-1-i]);
+      // addVideoTitleToTarget(videoItem[videoItem.length-1-i]);
+    // }
+
+    var videos = document.querySelectorAll('.queue_entry');
+    for (let i = 0; i < videos.length; i++) {
+      addVideoTitleToTarget(videos[i]);
     }
   });
 
