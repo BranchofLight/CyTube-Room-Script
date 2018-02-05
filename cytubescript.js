@@ -282,19 +282,13 @@ var main = function() {
     setUserColour(userList[i]);
   }
 
-  // create an observer instance
   var videoTitleObserver = new MutationObserver(function(mutations) {
     // Which mutation is used is not important
-    // var videoItem = mutations[0].target.getElementsByTagName("li");
+    var videoItem = mutations[0].target.getElementsByTagName("li");
 
-    // for (var i = 0; i < mutations.length; i++) {
+    for (var i = 0; i < mutations.length; i++) {
       // Modifies the last x (mutations.length) video titles
-      // addVideoTitleToTarget(videoItem[videoItem.length-1-i]);
-    // }
-
-    var videos = document.querySelectorAll('.queue_entry');
-    for (let i = 0; i < videos.length; i++) {
-      addVideoTitleToTarget(videos[i]);
+      addVideoTitleToTarget(videoItem[videoItem.length-1-i]);
     }
   });
 
