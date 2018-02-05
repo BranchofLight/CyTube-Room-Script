@@ -1,5 +1,4 @@
 /* TODO:
- * Add "tab notification" to new messages
  * pause / play (document.querySelector('iframe').contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');)
  *   -> will have to store current state somewhere - may be tricky - could just separate pause and play commands
  *   -> auto take lead? auto remove after?
@@ -312,7 +311,21 @@ var main = function() {
     }
   });
 
-  var nameMsgObserver = new MutationObserver(function(mutations) {
+  // Inits variables for tab visibility and message notifications
+  var newMsgInterval;
+  var hidden, visibilityEvent;
+  if (document.hidden !== undefined) {
+    hidden = 'hidden';
+    visibilityEvent = 'visibilitychange';
+  } else if (document.msHidden !== undefined) {
+    hidden = 'msHidden';
+    visibilityEvent = 'msvisibilitychange';
+  } else if (document.webkitHidden !== undefined) {
+    hidden = 'webkitHidden';
+    visibilityEvent = 'webkitvisibilitychange';
+  }
+
+  var msgObserver = new MutationObserver(function(mutations) {
     for (let i = 0; i < mutations.length; i++) {
       var newNodes = mutations[i].addedNodes;
       for (let k = 0; k < newNodes.length; k++) {
@@ -320,7 +333,27 @@ var main = function() {
         checkForOptions(newNodes[k]);
       }
     }
+
+    if (document[hidden] && newMsgInterval === undefined) {
+      newMsgInterval = setInterval(function() {
+        if (document.title === "geoffkeighleysroom") {
+          document.title = "New Message!";
+        } else {
+          document.title = "geoffkeighleysroom";
+        }
+      }, 500);
+    }
   });
+
+  if (hidden !== undefined) {
+    document.addEventListener(visibilityEvent, function() {
+      if (!document[hidden] && newMsgInterval) {
+        clearInterval(newMsgInterval);
+        newMsgInterval = undefined;
+        document.title = "geoffkeighleysroom";
+      }
+    });
+  }
 
   var usrListObserver = new MutationObserver(function(mutations) {
     for (let i = 0; i < mutations.length; i++) {
@@ -333,7 +366,7 @@ var main = function() {
 
   // configuration of the observer:
   var videoTitleConfig = {childList: true};
-  var nameMsgConfig = {childList : true};
+  var msgConfig = {childList : true};
   var usrListConfig = {childList : true};
 
   // Check all messages in history
@@ -348,7 +381,7 @@ var main = function() {
 
   // pass in the target node, as well as the observer options
   videoTitleObserver.observe(videoTitleTarget, videoTitleConfig);
-  nameMsgObserver.observe(msgTarget, nameMsgConfig);
+  msgObserver.observe(msgTarget, msgConfig);
   usrListObserver.observe(usrTarget, usrListConfig);
 
   // Remove old test area
