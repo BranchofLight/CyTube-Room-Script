@@ -25,7 +25,7 @@ var isMod = function(usr) {
 
 var colourMap = {
   "sadweeaboo2" : "red",
-  "RyanGoslingTwerk" : "#ff66cc"
+  "RyanGoslingTwerk" : "#ff66cc",
 };
 
 var msgColours = {
@@ -38,7 +38,26 @@ var addVideoTitleToTarget = function(targ) {
   if (targ.querySelector('.qe_title') !== null && targ.title !== undefined && targ.querySelector('.qe_title').innerText.length > 0 && !targ.className.includes('ui-')) {
     var videoTitle = targ.querySelector('.qe_title').innerText;
     if (!videoTitle.includes(targ.title)) {
-      targ.querySelector('.qe_title').innerText += " " + targ.title;
+      var username = targ.title.substring('Added by: '.length);
+      if (colourMap[username] || isMod(username)) {
+        var s = document.createElement('span');
+        s.innerText = username;
+
+        if (admin === username) {
+          s.classList.add('userlist_owner');
+        } else if (isMod(username)) {
+          s.classList.add('userlist_op');
+        } else {
+          s.style.color = colourMap[username];
+        }
+
+        s.style['font-size'] = '15px';
+
+        targ.querySelector('.qe_title').innerText += " Added by: ";
+        targ.querySelector('.qe_title').appendChild(s);
+      } else {
+        targ.querySelector('.qe_title').innerText += " " + targ.title;
+      }
     }
   }
 };
