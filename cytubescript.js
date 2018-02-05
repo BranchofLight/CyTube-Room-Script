@@ -1,9 +1,8 @@
 /* TODO:
- * Added by shows correct colour (or none if no colour exist in map)
- * Investigate video observer and use mutations correctly
  * Add "tab notification" to new messages
  * pause / play (document.querySelector('iframe').contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');)
  *   -> will have to store current state somewhere - may be tricky - could just separate pause and play commands
+ *   -> auto take lead? auto remove after?
  * spin
  * fast
  * free photo API that auto embeded first search result??
@@ -51,7 +50,7 @@ var addVideoTitleToTarget = function(targ) {
           s.style.color = colourMap[username];
         }
 
-        s.style['font-size'] = '15px';
+        // s.style['font-size'] = '15px';
 
         targ.querySelector('.qe_title').innerText += " Added by: ";
         targ.querySelector('.qe_title').appendChild(s);
@@ -305,34 +304,31 @@ var main = function() {
   }
 
   var videoTitleObserver = new MutationObserver(function(mutations) {
-    // for (var i = 0; i < mutations.length; i++) {
-    //   if (mutations[i].target.className.includes('pluid')) {
-    //     addVideoTitleToTarget(mutations[i].target);
-    //   }
-    // }
-
-    // Mutations causing issues - temporary fix
-    var videos = document.querySelectorAll('.queue_entry');
-    for (let i = 0; i < videos.length; i++) {
-      addVideoTitleToTarget(videos[i]);
+    for (let i = 0; i < mutations.length; i++) {
+      var newNodes = mutations[i].addedNodes;
+      for (let k = 0; k < newNodes.length; k++) {
+        addVideoTitleToTarget(newNodes[k]);
+      }
     }
   });
 
   var nameMsgObserver = new MutationObserver(function(mutations) {
-    var msgItem = mutations[0].target.getElementsByTagName("div");
-    for (var i = 0; i < mutations.length; i++) {
-      // Modifies the last x (mutations.length)
-      // Visual / DOM changes
-      addNameToTarget(msgItem[msgItem.length-1-i]);
-      // Functionality changes
-      checkForOptions(msgItem[msgItem.length-1-i]);
+    for (let i = 0; i < mutations.length; i++) {
+      var newNodes = mutations[i].addedNodes;
+      for (let k = 0; k < newNodes.length; k++) {
+        addNameToTarget(newNodes[k]);
+        checkForOptions(newNodes[k]);
+      }
     }
   });
 
   var usrListObserver = new MutationObserver(function(mutations) {
-    var usrItem = mutations[0].target.getElementsByClassName("userlist_item");
-    usrItem = usrItem[usrItem.length-1];
-    setUserColour(usrItem);
+    for (let i = 0; i < mutations.length; i++) {
+      var newNodes = mutations[i].addedNodes;
+      for (let k = 0; k < newNodes.length; k++) {
+        setUserColour(newNodes[k]);
+      }
+    }
   });
 
   // configuration of the observer:
