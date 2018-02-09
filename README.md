@@ -30,4 +30,4 @@ This script adds functionality to any CyTube video room.
 | 'roll   | Number  | Rolls a die with a number of sides equal to input given.    | 'roll 6                              |
 | 'skip   |         | A mod and admin tool to skip the current video.             | 'skip                                |
 | 'lead   |         | Takes or removes lead on yourself. Mod / admin only.        | 'lead                                |
-| 'video  |         | Pauses or plays the video (toggle). Mod / admin only.       | 'video                               |
+| 'video  |         | Pauses or plays the video. Auto-leads. Mod / admin only.    | 'video                               |
