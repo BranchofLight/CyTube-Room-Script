@@ -1,7 +1,4 @@
 /* TODO:
- * pause / play (document.querySelector('iframe').contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');)
- *   -> will have to store current state somewhere - may be tricky - could just separate pause and play commands
- *   -> auto take lead? auto remove after?
  * spin
  * fast
  * free photo API that auto embeded first search result??
@@ -17,6 +14,9 @@ var admin = "geoffkeighley";
 // Note: must add mod to channel first
 var mods = ["Fitzthistlewits"];
 
+var w = document.querySelector('#welcome');
+var scriptUser = (w === null) ? undefined : w.innerText.substring(w.innerText.indexOf(',')+2);
+
 var isMod = function(usr) {
   return mods.indexOf(usr) > -1 || usr === admin;
 };
@@ -30,6 +30,16 @@ var msgColours = {
   "success": "#0f8c1f",
   "error": "red",
   "general": "yellow",
+};
+
+var isPlaying = true; // this is an assumption, and should be overriden on load anyway
+var onPlayerStateChange = function(status) {
+  // other states available, https://developers.google.com/youtube/iframe_api_reference#Examples
+  if (status === 1) { // Playing
+    isPlaying = true;
+  } else if (status === 2) { // Paused
+    isPlaying = false;
+  }
 };
 
 var addVideoTitleToTarget = function(targ) {
@@ -49,9 +59,7 @@ var addVideoTitleToTarget = function(targ) {
           s.style.color = colourMap[username];
         }
 
-        // s.style['font-size'] = '15px';
-
-        targ.querySelector('.qe_title').innerText += " Added by: ";
+        targ.querySelector('.qe_title').innerText += "kAdded by: ";
         targ.querySelector('.qe_title').appendChild(s);
       } else {
         targ.querySelector('.qe_title').innerText += " " + targ.title;
@@ -98,6 +106,30 @@ var sendMsg = function(msg) {
   document.querySelector('#chatline').dispatchEvent(enterEvent);
 };
 
+// Toggles lead on user
+var toggleLead = function(user) {
+  var userList = document.querySelector('#userlist');
+  for (let i = 0; i < userList.childNodes.length; i++) {
+    if (userList.childNodes[i].innerText === user) {
+      var btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
+      userList.childNodes[i].querySelectorAll('button')[1].click();
+    }
+  }
+};
+
+var hasLead = function() {
+  if (document.querySelector('.glyphicon-star-empty') === null) {
+    debugger;
+    return false;
+  } else if (document.querySelector('.glyphicon-star-empty').parentNode.nextSibling.innerText === scriptUser) {
+    debugger;
+    return true;
+  }
+
+  debugger;
+  return false;
+};
+
 // isInit (optional) -> defaults to false
 //                   -> true: will ignore certain checks (such as 'roll)
 var checkForOptions = function(targ, isInit) {
@@ -107,9 +139,6 @@ var checkForOptions = function(targ, isInit) {
   if (targ.childNodes[2] !== undefined) {
     var msg = targ.childNodes[2].innerText;
     var username = targ.className.substring(("chat-msg-").length, targ.className.length);
-
-    var w = document.querySelector('#welcome');
-    var scriptUser = (w === null) ? undefined : w.innerText.substring(w.innerText.indexOf(',')+2);
 
     // Cannot be init as this will create a feedback loop
     if (msg.indexOf("'roll") === 0) {
@@ -128,17 +157,11 @@ var checkForOptions = function(targ, isInit) {
         targ.remove();
       }
     } else if (msg.indexOf("'lead") === 0 && isMod(username)) {
-      var userList = document.querySelector('#userlist');
       if (!isInit && scriptUser === username) {
-        for (let i = 0; i < userList.childNodes.length; i++) {
-          if (userList.childNodes[i].innerText === username) {
-            var btnClicked = userList.childNodes[i].querySelectorAll('button')[1].innerText;
-            userList.childNodes[i].querySelectorAll('button')[1].click();
-            var m = (btnClicked.includes("Give")) ? "has taken lead" : "has given up lead";
-            sendMsg(JSON.stringify({msg: username + " " + m, colour: msgColours.general}));
-            break;
-          }
-        }
+        // hasLead won't get updated info in time otherwise
+        var m = (!hasLead()) ? "has taken lead" : "has given up lead";
+        toggleLead(username);
+        sendMsg(JSON.stringify({msg: username + " " + m, colour: msgColours.general}));
       }
 
       targ.remove();
@@ -156,8 +179,20 @@ var checkForOptions = function(targ, isInit) {
           btnClicked.click();
           sendMsg(JSON.stringify({msg: username + " skipped video", colour: msgColours.general}));
         } else {
-          sendMsg(JSON.stringify({msg: username + " failed to skip - are buttons hidden?", colour: msgColours.failed}));
+          sendMsg(JSON.stringify({msg: username + " failed to skip - are buttons hidden?", colour: msgColours.error}));
         }
+      }
+
+      targ.remove();
+    } else if (msg.indexOf("'video") === 0 && isMod(username)) {
+      if (!isInit && scriptUser === username) {
+        if (!hasLead()) toggleLead(username);
+        var action = (isPlaying) ? 'pauseVideo' : 'playVideo';
+        document.querySelector('iframe').contentWindow.postMessage('{"event":"command","func":"'+action+'","args":""}', '*');
+
+        sendMsg(JSON.stringify({msg: username + ' ' + ((!isPlaying) ? 'resumed the video' : 'paused the video'), colour: msgColours.general}));
+
+        if (action === 'playVideo' && hasLead()) toggleLead(username);
       }
 
       targ.remove();
@@ -172,7 +207,7 @@ var checkForOptions = function(targ, isInit) {
 
       var imgElement = document.createElement('img');
       imgElement.src = image.src;
-      imgElement.style["max-width"] = "350px";
+      imgElement.style["max-width"] = "300px";
       imgElement.style["max-height"] = "200px";
       imgElement.style.cursor = "zoom-in";
       imgElement.classList.add('user-img');
@@ -283,6 +318,8 @@ var setUserColour = function(targ) {
 };
 
 var main = function() {
+  addBotMsg('Script has loaded a new copy: refresh if necessary', msgColours.error);
+
   var videoTitleTarget = document.getElementById('queue');
   var msgTarget = document.getElementById("messagebuffer");
   var usrTarget = document.getElementById("userlist");
@@ -359,7 +396,9 @@ var main = function() {
     for (let i = 0; i < mutations.length; i++) {
       var newNodes = mutations[i].addedNodes;
       for (let k = 0; k < newNodes.length; k++) {
-        setUserColour(newNodes[k]);
+        if (newNodes[k].classList.contains('userlist_item')) {
+          setUserColour(newNodes[k]);
+        }
       }
     }
   });
@@ -477,4 +516,11 @@ var main = function() {
   }
 
   document.querySelector('head').appendChild(cssTag);
+
+  window.addEventListener('message', function(e) {
+    var data = JSON.parse(e.data);
+    if (data.event === 'onStateChange') {
+      onPlayerStateChange(data.info);
+    }
+  });
 }();
