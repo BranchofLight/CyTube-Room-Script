@@ -59,7 +59,7 @@ var addVideoTitleToTarget = function(targ) {
           s.style.color = colourMap[username];
         }
 
-        targ.querySelector('.qe_title').innerText += "kAdded by: ";
+        targ.querySelector('.qe_title').innerText += " · Added by: ";
         targ.querySelector('.qe_title').appendChild(s);
       } else {
         targ.querySelector('.qe_title').innerText += " " + targ.title;
