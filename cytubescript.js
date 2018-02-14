@@ -347,8 +347,11 @@ var checkForOptions = function(targ, isInit) {
       try {
         var json = JSON.parse(j);
       } catch (error) {
+        console.log("Invalid JSON");
         return undefined;
       }
+
+      debugger;
 
       if (json.roll !== undefined && json.maxRoll !== undefined) {
         json.type = 'roll';
@@ -377,6 +380,7 @@ var checkForOptions = function(targ, isInit) {
       } else {
         // Should work even in init
         if (json.type === 'gif') {
+          debugger;
           var isFound = false;
           if (username !== scriptUser) {
             var messages = document.querySelector('#messagebuffer');
