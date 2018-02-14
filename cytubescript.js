@@ -119,14 +119,11 @@ var toggleLead = function(user) {
 
 var hasLead = function() {
   if (document.querySelector('.glyphicon-star-empty') === null) {
-    debugger;
     return false;
   } else if (document.querySelector('.glyphicon-star-empty').parentNode.nextSibling.innerText === scriptUser) {
-    debugger;
     return true;
   }
 
-  debugger;
   return false;
 };
 
@@ -351,8 +348,6 @@ var checkForOptions = function(targ, isInit) {
         return undefined;
       }
 
-      debugger;
-
       if (json.roll !== undefined && json.maxRoll !== undefined) {
         json.type = 'roll';
       } else if (json.msg !== undefined && json.colour !== undefined) {
@@ -366,7 +361,26 @@ var checkForOptions = function(targ, isInit) {
 
     var json = validateJSON(msg);
     if (json !== undefined && json.type !== null) {
-      if (!isInit) {
+      // Should work even in init
+      if (json.type === 'gif') {
+        debugger;
+        var isFound = false;
+        if (username !== scriptUser || isInit) {
+          var messages = document.querySelector('#messagebuffer');
+          for (let i = messages.length-1; i >= 0; i--) {
+            var timestamp = messages[i].querySelector('.timestamp').innerText;
+            var u         = messages[i].querySelector('.username').innerText;
+            u = u.substring(0, u.length-2); // removes ': '
+            if (timestamp === json.timestamp && u === json.username) {
+              addImage(messages[i], json.gif_url);
+              isFound = true;
+              break;
+            }
+          }
+        }
+
+        if (!isFound) targ.remove();
+      } else if (!isInit) {
         if (json.type === "roll") {
           if (username !== scriptUser) {
             addBotMsg(username + " rolled a " + json.roll + " on a d" + json.maxRoll, msgColours.success);
@@ -378,28 +392,7 @@ var checkForOptions = function(targ, isInit) {
           targ.remove();
         }
       } else {
-        // Should work even in init
-        if (json.type === 'gif') {
-          debugger;
-          var isFound = false;
-          if (username !== scriptUser) {
-            var messages = document.querySelector('#messagebuffer');
-            for (let i = messages.length-1; i >= 0; i--) {
-              var timestamp = messages[i].querySelector('.timestamp').innerText;
-              var u         = messages[i].querySelector('.username').innerText;
-              u = u.substring(0, u.length-2); // removes ': '
-              if (timestamp === json.timestamp && u === json.username) {
-                addImage(messages[i], json.gif_url);
-                isFound = true;
-                break;
-              }
-            }
-          }
-
-          if (!isFound) targ.remove();
-        } else {
-          targ.remove();
-        }
+        targ.remove();
       }
     }
   }
