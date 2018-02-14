@@ -366,7 +366,7 @@ var checkForOptions = function(targ, isInit) {
         debugger;
         var isFound = false;
         if (username !== scriptUser || isInit) {
-          var messages = document.querySelector('#messagebuffer');
+          var messages = document.querySelector('#messagebuffer').childNodes;
           for (let i = messages.length-1; i >= 0; i--) {
             var timestamp = messages[i].querySelector('.timestamp').innerText;
             var u         = messages[i].querySelector('.username').innerText;
