@@ -134,7 +134,8 @@ var addImage = function(targ, url) {
   var buffer = document.querySelector('#messagebuffer');
 
   var image = new Image();
-  image.onload = function() { buffer.scrollTop = buffer.scrollHeight; }
+  image.onload = function() { buffer.scrollTop = buffer.scrollHeight; };
+  image.onerror = function() { image.onerror = ""; image.src = "https:\/\/i.imgur.com\/VWzRomm.png"; };
   image.src = url;
 
   var imgElement = document.createElement('img');
@@ -200,6 +201,29 @@ var addImage = function(targ, url) {
     imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
     imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
   };
+};
+
+var addGif = function(targ, q) {
+  var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
+  var limit = 100;
+
+  fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}`)
+  .then(function(response) {
+    if (response.status === 200) {
+      response.json().then(function(json) {
+        if (json.data.length === 0) {
+          addBotMsg('No results found.', msgColours.general);
+          targ.remove();
+        } else {
+          var offset = Math.floor(Math.random() * json.data.length);
+          console.log(json.data[offset].images.original.url);
+          // Switches servers from media3 to media
+          var url = json.data[offset].images.original.url.replace('media3', 'media');
+          addImage(targ, url);
+        }
+      });
+    }
+  });
 };
 
 // isInit (optional) -> defaults to false
@@ -273,11 +297,13 @@ var checkForOptions = function(targ, isInit) {
         var content = msg.substring("'spin".length+1);
         // check for 'img
 
-        if (content.indexOf("'img") === 0 || targ.querySelector('img') !== null) {
+        if (content.indexOf("'img") === 0 || targ.querySelector('img') !== null || content.indexOf("'gif") === 0) {
           if (content.indexOf("'img") === 0) {
             addImage(targ, content.substring("'img".length));
-          } else {
+          } else if (targ.querySelector('img') !== null) {
             targ.lastChild.innerHTML = targ.lastChild.innerHTML.replace("'spin ", '');
+          } else if (content.indexOf("'gif") === 0) {
+            addGif(targ, content.substring("'gif ".length));
           }
 
           var imgs = targ.querySelectorAll('img');
@@ -300,27 +326,7 @@ var checkForOptions = function(targ, isInit) {
       }
     } else if (msg.indexOf("'gif") === 0) {
       if (!isInit) {
-        var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
-        var limit = 100;
-        var q = msg.substring("'gif ".length);
-
-        fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}`)
-        .then(function(response) {
-          if (response.status === 200) {
-            response.json().then(function(json) {
-              if (json.data.length === 0) {
-                addBotMsg('No results found.', msgColours.general);
-                targ.remove();
-              } else {
-                var offset = Math.floor(Math.random() * json.data.length);
-                // Switches servers from media3 to media
-                console.log(json.data[offset].images.original.url);
-                var url = json.data[offset].images.original.url.replace('3', '');
-                addImage(targ, url);
-              }
-            });
-          }
-        });
+        addGif(targ, msg.substring("'gif ".length));
       } else {
         // On init, just remove
         targ.remove();
