@@ -203,7 +203,7 @@ var addImage = function(targ, url) {
   };
 };
 
-var addGif = function(targ, q) {
+var addGif = function(targ, q, callback) {
   var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
   var limit = 100;
 
@@ -219,7 +219,9 @@ var addGif = function(targ, q) {
           console.log(json.data[offset].images.original.url);
           // Switches servers from media3 to media
           var url = json.data[offset].images.original.url.replace('media3', 'media');
-          addImage(targ, url);
+          // addImage(targ, url);
+          callback(url);
+          sendMsg(JSON.stringify({gif_url: url}));
         }
       });
     }
@@ -303,7 +305,8 @@ var checkForOptions = function(targ, isInit) {
           } else if (targ.querySelector('img') !== null) {
             targ.lastChild.innerHTML = targ.lastChild.innerHTML.replace("'spin ", '');
           } else if (content.indexOf("'gif") === 0) {
-            addGif(targ, content.substring("'gif ".length));
+            // work in progress
+            // addGif(targ, content.substring("'gif ".length));
           }
 
           var imgs = targ.querySelectorAll('img');
@@ -326,7 +329,12 @@ var checkForOptions = function(targ, isInit) {
       }
     } else if (msg.indexOf("'gif") === 0) {
       if (!isInit) {
-        addGif(targ, msg.substring("'gif ".length));
+        if (scriptUser === username) {
+          addGif(msg.substring("'gif ".length), function(url) {
+            addImage(targ, url);
+            sendMsg(JSON.stringify({gif_url: url, timestamp: targ.querySelector('.timestamp').innerText, 'username': username}));
+          });
+        }
       } else {
         // On init, just remove
         targ.remove();
@@ -344,12 +352,12 @@ var checkForOptions = function(targ, isInit) {
         return undefined;
       }
 
-      json = {'json': json, 'type': null};
-
-      if (json.json.roll !== undefined && json.json.maxRoll !== undefined) {
+      if (json.roll !== undefined && json.maxRoll !== undefined) {
         json.type = 'roll';
-      } else if (json.json.msg !== undefined && json.json.colour !== undefined) {
+      } else if (json.msg !== undefined && json.colour !== undefined) {
         json.type = 'msg';
+      } else if (json.gif_url !== undefined && json.timestamp !== undefined && json.username !== undefined) {
+        json.type = 'gif';
       }
 
       return json;
@@ -360,16 +368,36 @@ var checkForOptions = function(targ, isInit) {
       if (!isInit) {
         if (json.type === "roll") {
           if (username !== scriptUser) {
-            addBotMsg(username + " rolled a " + json.json.roll + " on a d" + json.json.maxRoll, msgColours.success);
+            addBotMsg(username + " rolled a " + json.roll + " on a d" + json.maxRoll, msgColours.success);
           }
 
           targ.remove();
         } else if (json.type === 'msg') {
-          addBotMsg(json.json.msg, json.json.colour);
+          addBotMsg(json.msg, json.colour);
           targ.remove();
         }
       } else {
-        targ.remove();
+        // Should work even in init
+        if (json.type === 'gif') {
+          if (username !== scriptUser) {
+            var messages = document.querySelector('#messagebuffer');
+            var isFound = false;
+            for (let i = messages.length-1; i >= 0; i--) {
+              var timestamp = messages[i].querySelector('.timestamp').innerText;
+              var u         = messages[i].querySelector('.username').innerText;
+              u = u.substring(0, u.length-2); // removes ': '
+              if (timestamp === json.timestamp && u === json.username) {
+                addImage(messages[i], json.gif_url);
+                isFound = true;
+                break;
+              }
+            }
+          }
+
+          if (!isFound) targ.remove();
+        } else {
+          targ.remove();
+        }
       }
     }
   }
