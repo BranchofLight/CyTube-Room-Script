@@ -219,9 +219,7 @@ var addGif = function(q, callback) {
           console.log(json.data[offset].images.original.url);
           // Switches servers from media3 to media
           var url = json.data[offset].images.original.url.replace('media3', 'media');
-          // addImage(targ, url);
           callback(url);
-          sendMsg(JSON.stringify({gif_url: url}));
         }
       });
     }
@@ -379,9 +377,9 @@ var checkForOptions = function(targ, isInit) {
       } else {
         // Should work even in init
         if (json.type === 'gif') {
+          var isFound = false;
           if (username !== scriptUser) {
             var messages = document.querySelector('#messagebuffer');
-            var isFound = false;
             for (let i = messages.length-1; i >= 0; i--) {
               var timestamp = messages[i].querySelector('.timestamp').innerText;
               var u         = messages[i].querySelector('.username').innerText;
