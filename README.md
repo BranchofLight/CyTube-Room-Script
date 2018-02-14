@@ -38,12 +38,12 @@ The script is now too large to support this feature. However it will still work 
 
 ## Usage
 
-| Keyword | Options | Description                                                             | Example                              |
-| ------- | ------- | ----------------------------------------------------------------------- | ------------------------------------ |
-| 'img    | URL     | Embeds an image in the chat window. Click image to enlarge.             | 'img https://i.imgur.com/FaMUWvF.jpg |
-| 'roll   | Number  | Rolls a die with a number of sides equal to input given.                | 'roll 6                              |
-| 'skip   |         | A mod and admin tool to skip the current video.                         | 'skip                                |
-| 'lead   |         | Takes or removes lead on yourself. Mod / admin only.                    | 'lead                                |
-| 'video  |         | Pauses or plays the video. Auto-leads. Mod / admin only.                | 'video                               |
-| 'gif    | Query   | Queries Giphy API and embeds a random result.                           | 'gif hello                           |
-| 'spin   | Message | Spins the given content. Only supports 'img, /emote and text as of now. | 'spin /duane                         |
+| Keyword | Options | Description                                                                            | Example                              |
+| ------- | ------- | -------------------------------------------------------------------------------------- | ------------------------------------ |
+| 'img    | URL     | Embeds an image in the chat window. Click image to enlarge.                            | 'img https://i.imgur.com/FaMUWvF.jpg |
+| 'roll   | Number  | Rolls a die with a number of sides equal to input given.                               | 'roll 6                              |
+| 'skip   |         | A mod and admin tool to skip the current video.                                        | 'skip                                |
+| 'lead   |         | Takes or removes lead on yourself. Mod / admin only.                                   | 'lead                                |
+| 'video  |         | Pauses or plays the video. Auto-leads. Mod / admin only.                               | 'video                               |
+| 'gif    | Query   | Queries Giphy API and embeds a random result.                                          | 'gif hello                           |
+| 'spin   | Message | Spins the given content. Only supports 'img, /emote, 'gif and text. No mixed content.  | 'spin /duane                         |
