@@ -363,8 +363,6 @@ var checkForOptions = function(targ, isInit) {
     if (json !== undefined && json.type !== null) {
       // Should work even in init
       if (json.type === 'gif') {
-        debugger;
-        var isFound = false;
         if (username !== scriptUser || isInit) {
           var messages = document.querySelector('#messagebuffer').childNodes;
           for (let i = messages.length-1; i >= 0; i--) {
@@ -374,14 +372,13 @@ var checkForOptions = function(targ, isInit) {
               u = u.substring(0, u.length-2); // removes ': '
               if (timestamp === json.timestamp && u === json.username) {
                 addImage(messages[i], json.gif_url);
-                isFound = true;
                 break;
               }
             }
           }
         }
 
-        targ.remove();        
+        targ.remove();
       } else if (!isInit) {
         if (json.type === "roll") {
           if (username !== scriptUser) {
@@ -500,12 +497,13 @@ var main = function() {
 
   // Check all messages in history
   // May delete some children, check for this
-  for (let i = 0; i < msgTarget.childNodes.length;) {
-    var len = msgTarget.childNodes.length;
+  // Start from bottom child for 'gif to work
+  for (let i = msgTarget.childNodes.length-1; i >= 0; i--) {
+    // var len = msgTarget.childNodes.length;
     checkForOptions(msgTarget.childNodes[i], true);
-    if (msgTarget.childNodes.length === len) {
-      i += 1;
-    }
+    // if (msgTarget.childNodes.length === len) {
+    //   i -= 1;
+    // }
   }
 
   // pass in the target node, as well as the observer options
