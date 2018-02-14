@@ -302,7 +302,7 @@ var checkForOptions = function(targ, isInit) {
         var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
         var limit = 1;
         var q = msg.substring("'gif ".length);
-        var offset = Math.round(Math.random() * 10);
+        var offset = Math.round(Math.random() * 50);
 
         var request = function(off) {
           if (off >= 0) {
