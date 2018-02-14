@@ -381,7 +381,7 @@ var checkForOptions = function(targ, isInit) {
           }
         }
 
-        if (!isFound) targ.remove();
+        targ.remove();        
       } else if (!isInit) {
         if (json.type === "roll") {
           if (username !== scriptUser) {
