@@ -305,7 +305,7 @@ var checkForOptions = function(targ, isInit) {
 
       var request = function(off) {
         if (off >= 0) {
-          fetch(`http:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}&offset=${off}`)
+          fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}&offset=${off}`)
           .then(function(response) {
             if (response.status === 200) {
               response.json().then(function(json) {
