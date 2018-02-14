@@ -1,7 +1,6 @@
 /* TODO:
- * spin
- * fast
  * free photo API that auto embeded first search result??
+ * fast
  * Add sort bot
  * bump
  * bot responses
@@ -298,6 +297,35 @@ var checkForOptions = function(targ, isInit) {
           targ.replaceChild(p, targ.lastChild);
         }
       }
+    } else if (msg.indexOf("'gif") === 0) {
+      var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
+      var limit = 1;
+      var q = msg.substring("'gif ".length);
+      var offset = Math.round(Math.random() * 10);
+
+      var request = function(off) {
+        if (off >= 0) {
+          fetch(`http:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}&offset=${off}`)
+          .then(function(response) {
+            if (response.status === 200) {
+              response.json().then(function(json) {
+                if (json.data.length === 0) {
+                  if (off === 0) {
+                    addBotMsg('No results found.', msgColours.general);
+                  } else {
+                    request(off-1);
+                  }
+                } else {
+                  addImage(targ, json.data[0].embed_url);
+                }
+              })
+            }
+          });
+        }
+      };
+
+      // The actual request call
+      request(offset);
     } else if (msg.indexOf("'img") === 0) {
       addImage(targ, msg.substring("'img".length));
     }
