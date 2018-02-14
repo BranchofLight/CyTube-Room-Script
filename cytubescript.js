@@ -130,6 +130,78 @@ var hasLead = function() {
   return false;
 };
 
+var addImage = function(targ, url) {
+  var buffer = document.querySelector('#messagebuffer');
+
+  var image = new Image();
+  image.onload = function() { buffer.scrollTop = buffer.scrollHeight; }
+  image.src = url;
+
+  var imgElement = document.createElement('img');
+  imgElement.src = image.src;
+  imgElement.style["max-width"] = "300px";
+  imgElement.style["max-height"] = "200px";
+  imgElement.style.cursor = "zoom-in";
+  imgElement.classList.add('user-img');
+  targ.appendChild(imgElement);
+  targ.childNodes[2].remove();
+
+  var imgDiv = document.createElement('div');
+  imgDiv.style.position = "fixed";
+  imgDiv.style.top = 0;
+  imgDiv.style.left = 0;
+  imgDiv.style.width = document.body.offsetWidth + "px";
+  imgDiv.style.height = document.body.offsetHeight + "px";
+  imgDiv.style["background-color"] = "rgba(23, 23, 23, 0.75)";
+  imgDiv.style["z-index"] = 2000; // Has to be above the fixed header
+  imgDiv.style.visibility = "hidden";
+  imgDiv.style.cursor = "zoom-out";
+  var imgPreview = document.createElement('img');
+  imgPreview.src = image.src;
+  imgPreview.style.visibility = "hidden";
+  imgPreview.style.position = "fixed";
+  imgPreview.style.top = "0px";
+  imgPreview.style.left = "0px";
+  imgPreview.style["z-index"] = 25;
+  imgPreview.style.cursor = "zoom-out";
+
+  imgDiv.appendChild(imgPreview);
+  targ.appendChild(imgDiv);
+
+  var clickShow = function(e) {
+    // Must be called here as offsetWidth/Height may change
+    imgDiv.style.width = window.innerWidth + "px";
+    imgDiv.style.height = window.innerHeight + "px";
+    imgDiv.style.visibility = "visible";
+
+    imgPreview.style["max-width"] = window.innerWidth*0.8 + "px";
+    imgPreview.style["max-height"] = window.innerHeight*0.98 + "px";
+    imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
+    imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
+    imgPreview.style.visibility = "visible";
+  };
+
+  var clickHide = function(e) {
+    imgPreview.style.visibility = "hidden";
+    imgDiv.style.visibility = "hidden";
+  };
+
+  imgElement.addEventListener('click', clickShow);
+
+  imgDiv.addEventListener('click',  clickHide);
+  imgPreview.addEventListener('click',  clickHide);
+
+  window.onresize = function() {
+    imgDiv.style.width = window.innerWidth + "px";
+    imgDiv.style.height = window.innerHeight + "px";
+
+    imgPreview.style["max-width"] = window.innerWidth*0.8 + "px";
+    imgPreview.style["max-height"] = window.innerHeight*0.98 + "px";
+    imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
+    imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
+  };
+};
+
 // isInit (optional) -> defaults to false
 //                   -> true: will ignore certain checks (such as 'roll)
 var checkForOptions = function(targ, isInit) {
@@ -198,90 +270,34 @@ var checkForOptions = function(targ, isInit) {
       targ.remove();
     } else if (msg.indexOf("'spin") === 0) {
       if (msg.substring("'spin".length).length > 0) {
-        var content = msg.substring("'spin".length);
+        var content = msg.substring("'spin".length+1);
         // check for 'img
 
-        // Prevents very long messages
-        // There will always be messages that mess up someone's UI
-        // Could check for this by window resize, but probably not worth it
-        if (content.length < 40) {
+        if (content.indexOf("'img") === 0 || targ.querySelector('img') !== null) {
+          if (content.indexOf("'img") === 0) {
+            addImage(targ, content.substring("'img".length));
+          } else {
+            targ.lastChild.innerHTML = targ.lastChild.innerHTML.replace("'spin ", '');
+          }
+
+          var img = targ.querySelector('img');
+          img.style.display = 'inline-block';
+          img.style.animation = 'spin 2s linear 0s infinite';
+        } else if (content.length < 40) {
+          // Prevents very long messages
+          // There will always be messages that mess up someone's UI
+          // Could check for this by window resize, but probably not worth it
+
           var p = document.createElement('p');
           p.innerText = content;
-          targ.parentNode.replaceChild(p, targ);
+          p.style.display = 'inline-block';
+          p.style.animation = 'spin 2s linear 0s infinite';
+
+          targ.replaceChild(p, targ.lastChild);
         }
       }
     } else if (msg.indexOf("'img") === 0) {
-      var url = msg.substr("'img".length);
-
-      var buffer = document.querySelector('#messagebuffer');
-
-      var image = new Image();
-      image.onload = function() { buffer.scrollTop = buffer.scrollHeight; }
-      image.src = url;
-
-      var imgElement = document.createElement('img');
-      imgElement.src = image.src;
-      imgElement.style["max-width"] = "300px";
-      imgElement.style["max-height"] = "200px";
-      imgElement.style.cursor = "zoom-in";
-      imgElement.classList.add('user-img');
-      targ.appendChild(imgElement);
-      targ.childNodes[2].remove();
-
-      var imgDiv = document.createElement('div');
-      imgDiv.style.position = "fixed";
-      imgDiv.style.top = 0;
-      imgDiv.style.left = 0;
-      imgDiv.style.width = document.body.offsetWidth + "px";
-      imgDiv.style.height = document.body.offsetHeight + "px";
-      imgDiv.style["background-color"] = "rgba(23, 23, 23, 0.75)";
-      imgDiv.style["z-index"] = 2000; // Has to be above the fixed header
-      imgDiv.style.visibility = "hidden";
-      imgDiv.style.cursor = "zoom-out";
-      var imgPreview = document.createElement('img');
-      imgPreview.src = image.src;
-      imgPreview.style.visibility = "hidden";
-      imgPreview.style.position = "fixed";
-      imgPreview.style.top = "0px";
-      imgPreview.style.left = "0px";
-      imgPreview.style["z-index"] = 25;
-      imgPreview.style.cursor = "zoom-out";
-
-      imgDiv.appendChild(imgPreview);
-      targ.appendChild(imgDiv);
-
-      var clickShow = function(e) {
-        // Must be called here as offsetWidth/Height may change
-        imgDiv.style.width = window.innerWidth + "px";
-        imgDiv.style.height = window.innerHeight + "px";
-        imgDiv.style.visibility = "visible";
-
-        imgPreview.style["max-width"] = window.innerWidth*0.8 + "px";
-        imgPreview.style["max-height"] = window.innerHeight*0.98 + "px";
-        imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
-        imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
-        imgPreview.style.visibility = "visible";
-      };
-
-      var clickHide = function(e) {
-        imgPreview.style.visibility = "hidden";
-        imgDiv.style.visibility = "hidden";
-      };
-
-      imgElement.addEventListener('click', clickShow);
-
-      imgDiv.addEventListener('click',  clickHide);
-      imgPreview.addEventListener('click',  clickHide);
-
-      window.onresize = function() {
-        imgDiv.style.width = window.innerWidth + "px";
-        imgDiv.style.height = window.innerHeight + "px";
-
-        imgPreview.style["max-width"] = window.innerWidth*0.8 + "px";
-        imgPreview.style["max-height"] = window.innerHeight*0.98 + "px";
-        imgPreview.style.top = ((window.innerHeight - imgPreview.height) / 2) + "px";
-        imgPreview.style.left = ((window.innerWidth - imgPreview.width) / 2) + "px";
-      };
+      addImage(targ, msg.substring("'img".length));
     }
 
     // Returns an object with the JSON and the process type
@@ -520,6 +536,18 @@ var main = function() {
   .banner img {
     width: 100%;
     height: 180px;
+  }
+  @-moz-keyframes spin {
+      from { -moz-transform: rotate(0deg); }
+      to { -moz-transform: rotate(359deg); }
+  }
+  @-webkit-keyframes spin {
+      from { -webkit-transform: rotate(0deg); }
+      to { -webkit-transform: rotate(359deg); }
+  }
+  @keyframes spin {
+      from {transform:rotate(0deg);}
+      to {transform:rotate(359deg);}
   }`;
 
   var cssTag = document.createElement('style');
