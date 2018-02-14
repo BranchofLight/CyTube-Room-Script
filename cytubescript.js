@@ -368,7 +368,7 @@ var checkForOptions = function(targ, isInit) {
         if (username !== scriptUser || isInit) {
           var messages = document.querySelector('#messagebuffer').childNodes;
           for (let i = messages.length-1; i >= 0; i--) {
-            if (messages[i].className.contains('chat-msg')) {
+            if (messages[i].className.includes('chat-msg')) {
               var timestamp = messages[i].querySelector('.timestamp').innerText;
               var u         = messages[i].querySelector('.username').innerText;
               u = u.substring(0, u.length-2); // removes ': '
