@@ -203,7 +203,7 @@ var addImage = function(targ, url) {
   };
 };
 
-var addGif = function(targ, q, callback) {
+var addGif = function(q, callback) {
   var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
   var limit = 100;
 
