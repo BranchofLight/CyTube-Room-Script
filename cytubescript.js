@@ -1,5 +1,4 @@
 /* TODO:
- * 'gif will sometimes display a corrupt img - why?
  * have 'spin support 'gif
  * fast
  * Add sort bot
@@ -292,16 +291,25 @@ var checkForOptions = function(targ, isInit) {
     } else if (msg.indexOf("'spin") === 0) {
       if (msg.substring("'spin".length).length > 0) {
         var content = msg.substring("'spin".length+1);
-        // check for 'img
-
-        if (content.indexOf("'img") === 0 || targ.querySelector('img') !== null || content.indexOf("'gif") === 0) {
+        if (content.indexOf("'gif") === 0) {
+          if (scriptUser === username) {
+            addGif(content.substring("'gif ".length), function(url) {
+              addImage(targ, url);
+              var imgs = targ.querySelectorAll('img');
+              for (let i = 0; i < imgs.length; i++) {
+                imgs[i].style.display = 'inline-block';
+                imgs[i].style.animation = 'spin 2s linear 0s infinite';
+              }
+              sendMsg(JSON.stringify({gif_url: url, timestamp: targ.querySelector('.timestamp').innerText, 'username': username, options: 'spin'}));
+            });
+          } else {
+            targ.remove();
+          }
+        } else if (content.indexOf("'img") === 0 || targ.querySelector('img') !== null) {
           if (content.indexOf("'img") === 0) {
             addImage(targ, content.substring("'img".length));
           } else if (targ.querySelector('img') !== null) {
             targ.lastChild.innerHTML = targ.lastChild.innerHTML.replace("'spin ", '');
-          } else if (content.indexOf("'gif") === 0) {
-            // work in progress
-            // addGif(targ, content.substring("'gif ".length));
           }
 
           var imgs = targ.querySelectorAll('img');
@@ -372,6 +380,13 @@ var checkForOptions = function(targ, isInit) {
               u = u.substring(0, u.length-2); // removes ': '
               if (timestamp === json.timestamp && u === json.username) {
                 addImage(messages[i], json.gif_url);
+                if (json.options === 'spin') {
+                  var imgs = targ.querySelectorAll('img');
+                  for (let i = 0; i < imgs.length; i++) {
+                    imgs[i].style.display = 'inline-block';
+                    imgs[i].style.animation = 'spin 2s linear 0s infinite';
+                  }
+                }
                 break;
               }
             }
@@ -496,14 +511,10 @@ var main = function() {
   var usrListConfig = {childList : true};
 
   // Check all messages in history
-  // May delete some children, check for this
-  // Start from bottom child for 'gif to work
+  // May delete some children, check for this (not needed with last to first)
+  // Start from bottom child for 'gif to work, also simplifies loop
   for (let i = msgTarget.childNodes.length-1; i >= 0; i--) {
-    // var len = msgTarget.childNodes.length;
     checkForOptions(msgTarget.childNodes[i], true);
-    // if (msgTarget.childNodes.length === len) {
-    //   i -= 1;
-    // }
   }
 
   // pass in the target node, as well as the observer options
