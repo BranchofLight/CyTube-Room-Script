@@ -24,15 +24,17 @@ This script adds functionality to any CyTube video room.
 
 This will provide automatic updates to your room without having to manually update the script. Note that updates may take time to be reflected to users. Neither rawgit or I guarantee uptime or compatibility in a room especially one with users using different cached script versions.
 
-### Manual Updates
+~~### Manual Updates
 1. Go to a channel page where you have script permissions.
 2. Click 'Channel Settings'.
 3. Click 'Edit' dropdown.
 4. Select 'Javascript' from the dropdown.
 5. Paste the script in the text area provided.
-6. Click 'Save JS'.
+6. Click 'Save JS'.~~
 
-This method requires you to come back here for newer version of the script as desired. Clicking 'commits' at the top of the main script page will allow you to check for a version that works best for your needs if necessary.
+~~This method requires you to come back here for newer version of the script as desired. Clicking 'commits' at the top of the main script page will allow you to check for a version that works best for your needs if necessary.~~
+
+The script is now too large to support this feature. However it will still work with older and smaller versions of the script which you can navigate to at the top with 'Commits'. This is a limitation given by cy.tube and the only current solutions are to minify (advanced) or use automatic updates (recommended).
 
 ## Usage
 
