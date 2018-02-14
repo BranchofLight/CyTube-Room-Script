@@ -317,8 +317,8 @@ var checkForOptions = function(targ, isInit) {
                   }
                 } else {
                   // Switches servers from media3 to media
-                  var url = json.data[0].original.url.replace('3', '');
-                  addImage(targ, json.data[0].embed_url);
+                  var url = json.data[0].images.original.url.replace('3', '');
+                  addImage(targ, url);
                 }
               })
             }
