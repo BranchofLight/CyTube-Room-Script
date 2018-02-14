@@ -300,36 +300,25 @@ var checkForOptions = function(targ, isInit) {
     } else if (msg.indexOf("'gif") === 0) {
       if (!isInit) {
         var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
-        var limit = 1;
+        var limit = 100;
         var q = msg.substring("'gif ".length);
-        var offset = Math.round(Math.random() * 50);
 
-        var request = function(off) {
-          if (off >= 0) {
-            fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}&offset=${off}`)
-            .then(function(response) {
-              if (response.status === 200) {
-                response.json().then(function(json) {
-                  if (json.data.length === 0) {
-                    if (off === 0) {
-                      addBotMsg('No results found.', msgColours.general);
-                      targ.remove();
-                    } else {
-                      request(off-1);
-                    }
-                  } else {
-                    // Switches servers from media3 to media
-                    var url = json.data[0].images.original.url.replace('3', '');
-                    addImage(targ, url);
-                  }
-                })
+        fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}`)
+        .then(function(response) {
+          if (response.status === 200) {
+            response.json().then(function(json) {
+              if (json.data.length === 0) {
+                addBotMsg('No results found.', msgColours.general);
+                targ.remove();
+              } else {
+                var offset = Math.floor(Math.random() * json.data.length);
+                // Switches servers from media3 to media
+                var url = json.data[offset].images.original.url.replace('3', '');
+                addImage(targ, url);
               }
             });
           }
-        };
-
-        // The actual request call
-        request(offset);
+        });
       } else {
         // On init, just remove
         targ.remove();
