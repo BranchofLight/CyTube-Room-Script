@@ -298,36 +298,42 @@ var checkForOptions = function(targ, isInit) {
         }
       }
     } else if (msg.indexOf("'gif") === 0) {
-      var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
-      var limit = 1;
-      var q = msg.substring("'gif ".length);
-      var offset = Math.round(Math.random() * 10);
+      if (!isInit) {
+        var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
+        var limit = 1;
+        var q = msg.substring("'gif ".length);
+        var offset = Math.round(Math.random() * 10);
 
-      var request = function(off) {
-        if (off >= 0) {
-          fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}&offset=${off}`)
-          .then(function(response) {
-            if (response.status === 200) {
-              response.json().then(function(json) {
-                if (json.data.length === 0) {
-                  if (off === 0) {
-                    addBotMsg('No results found.', msgColours.general);
+        var request = function(off) {
+          if (off >= 0) {
+            fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}&offset=${off}`)
+            .then(function(response) {
+              if (response.status === 200) {
+                response.json().then(function(json) {
+                  if (json.data.length === 0) {
+                    if (off === 0) {
+                      addBotMsg('No results found.', msgColours.general);
+                      targ.remove();
+                    } else {
+                      request(off-1);
+                    }
                   } else {
-                    request(off-1);
+                    // Switches servers from media3 to media
+                    var url = json.data[0].images.original.url.replace('3', '');
+                    addImage(targ, url);
                   }
-                } else {
-                  // Switches servers from media3 to media
-                  var url = json.data[0].images.original.url.replace('3', '');
-                  addImage(targ, url);
-                }
-              })
-            }
-          });
-        }
-      };
+                })
+              }
+            });
+          }
+        };
 
-      // The actual request call
-      request(offset);
+        // The actual request call
+        request(offset);
+      } else {
+        // On init, just remove
+        targ.remove();
+      }
     } else if (msg.indexOf("'img") === 0) {
       addImage(targ, msg.substring("'img".length));
     }
