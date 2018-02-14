@@ -280,9 +280,11 @@ var checkForOptions = function(targ, isInit) {
             targ.lastChild.innerHTML = targ.lastChild.innerHTML.replace("'spin ", '');
           }
 
-          var img = targ.querySelector('img');
-          img.style.display = 'inline-block';
-          img.style.animation = 'spin 2s linear 0s infinite';
+          var imgs = targ.querySelectorAll('img');
+          for (let i = 0; i < imgs.length; i++) {
+            imgs[i].style.display = 'inline-block';
+            imgs[i].style.animation = 'spin 2s linear 0s infinite';
+          }
         } else if (content.length < 40) {
           // Prevents very long messages
           // There will always be messages that mess up someone's UI
