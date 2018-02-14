@@ -6,12 +6,15 @@ This script adds functionality to any CyTube video room.
 - Usernames are displayed on all sent messages for easier identification.
 - Usernames displayed beside videos to identify who added what.
 - Embedded images with large sized previews.
+- Giphy API integration allowing auto gif embedding.
 - Custom colour mappings for any registered users.
 - Dice rolling of any side amount.
 - Ability to add custom "bot"/server messages.
 - Ability to add a banner image to your room.
 - Customize CSS in JS file to avoid managing multiple files.
-- Skip videos and toggle lead via keyboard commands.
+- Skip videos, pause, play and toggle lead via keyboard commands.
+- Spin images, text or gifs.
+- Framework for implementing custom features requiring synchronized information between users without a server. 
 - Much more in progress.
 
 ## Installation
