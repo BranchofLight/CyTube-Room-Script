@@ -316,6 +316,8 @@ var checkForOptions = function(targ, isInit) {
                     request(off-1);
                   }
                 } else {
+                  // Switches servers from media3 to media
+                  var url = json.data[0].original.url.replace('3', '');
                   addImage(targ, json.data[0].embed_url);
                 }
               })
