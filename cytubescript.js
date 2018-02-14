@@ -196,6 +196,20 @@ var checkForOptions = function(targ, isInit) {
       }
 
       targ.remove();
+    } else if (msg.indexOf("'spin") === 0) {
+      if (msg.substring("'spin".length).length > 0) {
+        var content = msg.substring("'spin".length);
+        // check for 'img
+
+        // Prevents very long messages
+        // There will always be messages that mess up someone's UI
+        // Could check for this by window resize, but probably not worth it
+        if (content.length < 40) {
+          var p = document.createElement('p');
+          p.innerText = content;
+          targ.parentNode.replaceChild(p, targ);
+        }
+      }
     } else if (msg.indexOf("'img") === 0) {
       var url = msg.substr("'img".length);
 
