@@ -1,5 +1,6 @@
 /* TODO:
- * free photo API that auto embeded first search result??
+ * 'gif will sometimes display a corrupt img - why?
+ * have 'spin support 'gif
  * fast
  * Add sort bot
  * bump
@@ -313,6 +314,7 @@ var checkForOptions = function(targ, isInit) {
               } else {
                 var offset = Math.floor(Math.random() * json.data.length);
                 // Switches servers from media3 to media
+                console.log(json.data[offset].images.original.url);
                 var url = json.data[offset].images.original.url.replace('3', '');
                 addImage(targ, url);
               }
