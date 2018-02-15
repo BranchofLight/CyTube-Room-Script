@@ -1,5 +1,6 @@
 /* TODO:
- * have 'spin support 'gif
+ * onerror is broken
+ * marc cant send or receive gifs, only embed
  * fast
  * Add sort bot
  * bump
@@ -236,7 +237,6 @@ var checkForOptions = function(targ, isInit) {
     if (msg.indexOf("'roll") === 0) {
       if (username === scriptUser && !isInit) {
         var maxRoll = msg.substr("'roll ".length);
-        console.log("Roll: " + parseInt(maxRoll));
         if (!isNaN(maxRoll) && maxRoll >= 1 && maxRoll <= 10000) {
           maxRoll = Math.trunc(maxRoll);
           var roll = Math.random() * (maxRoll - 1) + 1;
@@ -352,7 +352,6 @@ var checkForOptions = function(targ, isInit) {
       try {
         var json = JSON.parse(j);
       } catch (error) {
-        console.log("Invalid JSON");
         return undefined;
       }
 
@@ -378,6 +377,7 @@ var checkForOptions = function(targ, isInit) {
               var timestamp = messages[i].querySelector('.timestamp').innerText;
               var u         = messages[i].querySelector('.username').innerText;
               u = u.substring(0, u.length-2); // removes ': '
+              debugger;
               if (timestamp === json.timestamp && u === json.username) {
                 addImage(messages[i], json.gif_url);
                 if (json.options === 'spin') {
