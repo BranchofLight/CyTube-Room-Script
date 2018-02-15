@@ -300,7 +300,7 @@ var checkForOptions = function(targ, isInit) {
                 imgs[i].style.display = 'inline-block';
                 imgs[i].style.animation = 'spin 2s linear 0s infinite';
               }
-              sendMsg(JSON.stringify({gif_url: url, timestamp: targ.querySelector('.timestamp').innerText, 'username': username, options: 'spin'}));
+              sendMsg(JSON.stringify({gif_url: url, 'username': username, options: 'spin'}));
             });
           } else {
             targ.remove();
@@ -335,7 +335,7 @@ var checkForOptions = function(targ, isInit) {
         if (scriptUser === username) {
           addGif(msg.substring("'gif ".length), function(url) {
             addImage(targ, url);
-            sendMsg(JSON.stringify({gif_url: url, timestamp: targ.querySelector('.timestamp').innerText, 'username': username}));
+            sendMsg(JSON.stringify({gif_url: url, 'username': username}));
           });
         }
       } else {
@@ -359,7 +359,7 @@ var checkForOptions = function(targ, isInit) {
         json.type = 'roll';
       } else if (json.msg !== undefined && json.colour !== undefined) {
         json.type = 'msg';
-      } else if (json.gif_url !== undefined && json.timestamp !== undefined && json.username !== undefined) {
+      } else if (json.gif_url !== undefined && json.username !== undefined) {
         json.type = 'gif';
       }
 
@@ -373,12 +373,10 @@ var checkForOptions = function(targ, isInit) {
         if (username !== scriptUser || isInit) {
           var messages = document.querySelector('#messagebuffer').childNodes;
           for (let i = messages.length-1; i >= 0; i--) {
-            if (messages[i].querySelector('.timestamp') !== null && messages[i].querySelector('.username') !== null) {
-              var timestamp = messages[i].querySelector('.timestamp').innerText;
+            if (messages[i].querySelector('.username') !== null) {
               var u         = messages[i].querySelector('.username').innerText;
               u = u.substring(0, u.length-2); // removes ': '
-              debugger;
-              if (timestamp === json.timestamp && u === json.username) {
+              if (u === json.username && (messages[i].lastChild.innerText.indexOf("'gif") === 0 || messages[i].lastChild.innerText.indexOf("'spin 'gif") === 0)) {
                 addImage(messages[i], json.gif_url);
                 if (json.options === 'spin') {
                   var imgs = targ.querySelectorAll('img');
