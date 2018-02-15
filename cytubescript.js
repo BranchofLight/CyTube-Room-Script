@@ -212,10 +212,8 @@ var addGif = function(tag, callback) {
           addBotMsg('No results found.', msgColours.general);
           targ.remove();
         } else {
-          // var offset = Math.floor(Math.random() * json.data.length);
           console.log(json.data.images.original.url);
           // Switches servers from media3 to media
-          // var url = json.data[offset].images.original.url.replace('media3', 'media');
           callback(json.data.images.original.url.replace('media3', 'media'));
         }
       });
