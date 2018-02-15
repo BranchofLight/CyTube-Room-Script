@@ -1,6 +1,7 @@
 /* TODO:
  * onerror is broken
- * marc cant send or receive gifs, only embed
+ * alt text for gifs should be search term
+ * lower limit on gifs (make more relevant)
  * fast
  * Add sort bot
  * bump
@@ -200,11 +201,10 @@ var addImage = function(targ, url) {
   };
 };
 
-var addGif = function(q, callback) {
+var addGif = function(tag, callback) {
   var api_key = "fo4xOJtcZuXE1t6JSoof674hHercv45G";
-  var limit = 100;
 
-  fetch(`https:\/\/api.giphy.com\/v1\/gifs\/search?api_key=${api_key}&q=${q}&limit=${limit}`)
+  fetch(`https:\/\/api.giphy.com\/v1\/gifs\/random?api_key=${api_key}&tag=${tag}`)
   .then(function(response) {
     if (response.status === 200) {
       response.json().then(function(json) {
@@ -212,11 +212,11 @@ var addGif = function(q, callback) {
           addBotMsg('No results found.', msgColours.general);
           targ.remove();
         } else {
-          var offset = Math.floor(Math.random() * json.data.length);
-          console.log(json.data[offset].images.original.url);
+          // var offset = Math.floor(Math.random() * json.data.length);
+          console.log(json.data.images.original.url);
           // Switches servers from media3 to media
-          var url = json.data[offset].images.original.url.replace('media3', 'media');
-          callback(url);
+          // var url = json.data[offset].images.original.url.replace('media3', 'media');
+          callback(json.data.images.original.url.replace('media3', 'media'));
         }
       });
     }
