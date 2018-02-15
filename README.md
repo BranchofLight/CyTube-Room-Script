@@ -5,6 +5,7 @@ This script adds functionality to any CyTube video room.
 ## Feature List
 - Usernames are displayed on all sent messages for easier identification.
 - Usernames displayed beside videos to identify who added what.
+- Notification of new messages displayed on the tab title.
 - Embedded images with large sized previews.
 - Giphy API integration allowing auto gif embedding.
 - Custom colour mappings for any registered users.
@@ -22,7 +23,7 @@ This script adds functionality to any CyTube video room.
 1. Go to a channel page where you have script permissions.
 2. Click 'Channel Settings'.
 3. Click 'Admin Settings'.
-4. Paste the following link into the 'External Javascript' input: https://cdn.rawgit.com/BranchofLight/CyTube-Room-Script/master/cytubescript.js
+4. Paste the following link into the 'External Javascript' input: https://cdn.rawgit.com/BranchofLight/CyTube-Room-Script/79ce5921/cytubescript.js Note: only major releases will be reflected in this link. For an up to date version, rawgit the js file.
 5. Click 'Close'.
 
 This will provide automatic updates to your room without having to manually update the script. Note that updates may take time to be reflected to users. Neither rawgit or I guarantee uptime or compatibility in a room especially one with users using different cached script versions.
