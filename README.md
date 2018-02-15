@@ -5,6 +5,7 @@ This script adds functionality to any CyTube video room.
 ## Feature List
 - Usernames are displayed on all sent messages for easier identification.
 - Usernames displayed beside videos to identify who added what.
+- Notification of new messages displayed on the tab title.
 - Embedded images with large sized previews.
 - Giphy API integration allowing auto gif embedding.
 - Custom colour mappings for any registered users.
