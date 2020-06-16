@@ -1,0 +1,26 @@
+{
+  "name": "cytube-room-script",
+  "version": "1.0.0",
+  "description": "This script adds functionality to any CyTube video room.",
+  "main": "cytubescript.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack --mode=development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BranchofLight/CyTube-Room-Script.git"
+  },
+  "author": "Scott Andrechek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BranchofLight/CyTube-Room-Script/issues"
+  },
+  "homepage": "https://github.com/BranchofLight/CyTube-Room-Script#readme",
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "prettier": "2.0.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
