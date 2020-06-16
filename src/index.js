@@ -30,7 +30,7 @@ let newMsgInterval = undefined;
 const userConfig = [
     {
         username: "geoffkeighley",
-        colour: "red",
+        colour: "#71b3ff",
     },
     {
         username: "sadweeaboo2",
