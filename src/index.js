@@ -47,7 +47,7 @@ const userConfig = [
     },
     {
         username: "Eshnuz",
-        colour: "##f7ff00",
+        colour: "#f7ff00",
     },
 ];
 

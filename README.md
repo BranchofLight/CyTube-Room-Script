@@ -18,4 +18,3 @@ This script adds functionality to any CyTube video room.
 -   Much more in progress.
 
 New and improved readme coming soon.
-w
