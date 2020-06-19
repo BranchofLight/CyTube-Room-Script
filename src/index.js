@@ -1,6 +1,10 @@
 /**
  * TODO
- * /gif -> giphy search (use a different API?)
+ * /gif ->
+ *      => capture each keydown (verify its a character if possible) in a string
+ *      => when ENTER is pressed, check if it has commands
+ *      => process commands
+ *      => never have to do this from msg buffer this way
  * Integrate webpack for bundling and minifying ONLY (use prettier watch, eslint vscode extension)
  * Break out code into other files (processors, utility, or whatever makes sense)
  * /video -> take lead (if don't already have it), pause video (admin / mod only)
@@ -26,6 +30,7 @@ Array.prototype.getLastItem = function () {
 };
 
 let newMsgInterval = undefined;
+let msgTyped = "";
 
 const userConfig = [
     {
@@ -39,6 +44,10 @@ const userConfig = [
     {
         username: "Fitzthistlewits",
         colour: "#a83fff",
+    },
+    {
+        username: "Eshnuz",
+        colour: "##f7ff00",
     },
 ];
 
@@ -60,7 +69,39 @@ const getServerMsgNode = (msgText, colour) => {
     return container;
 };
 
-const sendUserMsg = node => {};
+/**
+ * @param {object | string} msg Can be a DOM element or text string. Will be appended to message buffer.
+ * @returns {null} returns null if msg isn't a node or text string, otherwise does not explicitly return
+ **/
+const appendMsgNodeToBuffer = msg => {
+    const msgSpan = document.createElement("span");
+    if (typeof msg === "object" && msg.innerHTML !== undefined) {
+        msgSpan.appendChild(msg);
+    } else if (typeof msg === "string") {
+        msgSpan.innerText = msg;
+    } else {
+        return null;
+    }
+
+    const container = document.createElement("div");
+    container.classList.add(`chat-msg-${currentUsername}`);
+
+    const timestamp = document.createElement("span");
+    timestamp.classList.add("timestamp");
+    const dateTime = new Date();
+    timestamp.innerText = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}]`;
+
+    const usernameSpan = document.createElement("span");
+    const usernameStrong = document.createElement("strong");
+    usernameStrong.innerText = currentUsername;
+    usernameStrong.classList.add("username");
+
+    usernameSpan.appendChild(usernameStrong);
+
+    container.appendChild(timestamp);
+    container.appendChild(usernameSpan);
+    container.appendChild(msg);
+};
 
 const getMediaNode = () => {
     const container = document.createElement("div");
@@ -106,6 +147,33 @@ const getVideoNode = videoSrc => {
 
     return newNode;
 };
+
+// eslint-disable-next-line no-unused-vars
+const initLargeImageArea = (() => {
+    const imgPreviewClass = "image-preview";
+    if (document.querySelector(`.${imgPreviewClass}`) === null) {
+        const imgPreviewContainer = document.createElement("div");
+        imgPreviewContainer.classList.add(imgPreviewClass);
+        imgPreviewContainer.classList.add("hidden");
+        imgPreviewContainer.onclick = () => {
+            imgPreviewContainer.classList.add("hidden");
+        };
+
+        const previewImage = document.createElement("img");
+        imgPreviewContainer.appendChild(previewImage);
+
+        document.addEventListener("keydown", e => {
+            if (
+                e.key === "Escape" &&
+                !imgPreviewContainer.classList.contains("hidden")
+            ) {
+                imgPreviewContainer.classList.add("hidden");
+            }
+        });
+
+        document.body.appendChild(imgPreviewContainer);
+    }
+})();
 
 let customStyleTag = document.createElement("style");
 customStyleTag.classList.add("custom-css");
@@ -270,14 +338,19 @@ const getGifSelectDialogNode = gifsList => {
             gifsList[gifsListIndex].images.original.url;
     });
 
-    const confirmButton = document.createElement("button");
-    confirmButton.classList.add("confirm-button");
-    confirmButton.innerText = "✓";
-
     const cancelButton = document.createElement("button");
     cancelButton.classList.add("cancel-button");
     cancelButton.innerText = "✖";
     cancelButton.addEventListener("click", () => container.remove());
+
+    const confirmButton = document.createElement("button");
+    confirmButton.classList.add("confirm-button");
+    confirmButton.innerText = "✓";
+    confirmButton.addEventListener("click", () => {
+        cancelButton.remove();
+        nextButton.remove();
+        confirmButton.remove();
+    });
 
     const imgNode = getImgNode(gifsList[0].images.original.url);
 
@@ -290,36 +363,48 @@ const getGifSelectDialogNode = gifsList => {
 };
 
 const getGifSelectNode = term => {
-    if (term.length > 0) {
-        fetch(
-            `https://${apiConfig.baseURL}?api_key=${
-                apiConfig.apiKey
-            }&q=${encodeURIComponent(term)}`
-        ).then(res => {
-            if (res.status !== 200) {
-                console.log("Server error: ", res.status);
-            } else {
-                res.json()
-                    .then(({ data }) => {
-                        console.log(data);
-                        if (data.length > 0) {
-                            msgBuffer.appendChild(getGifSelectDialogNode(data));
-                            // create node with 3 buttons (next, confirm, cancel)
-                            // insert first gif into it (use getimgnode?)
-                        }
-                    })
-                    .catch(err => {
-                        console.log("ERROR: ", err);
+    return new Promise((resolve, reject) => {
+        if (term.length > 0) {
+            fetch(
+                `https://${apiConfig.baseURL}?api_key=${
+                    apiConfig.apiKey
+                }&q=${encodeURIComponent(term)}`
+            )
+                .then(res => {
+                    if (res.status !== 200) {
+                        reject({
+                            err: "Server error: " + res.status,
+                        });
+                    } else {
+                        res.json()
+                            .then(({ data }) => {
+                                console.log(data);
+                                if (data.length > 0) {
+                                    resolve(getGifSelectDialogNode(data));
+                                }
+                            })
+                            .catch(err => {
+                                reject({ err });
+                            });
+                    }
+                })
+                .catch(err => {
+                    reject({
+                        err: "API call was not sent correctly: " + err,
                     });
-            }
-        });
-        // if has results ->
-        // create node with gif inside and 3 buttons ()
-        // if has no results ->
-        // return server error message to only initiating user
-        // everyone else just sees the failed gif search
-        // ->> how do we prevent this causing issues on refresh?
-    }
+                });
+            // if has results ->
+            // create node with gif inside and 3 buttons ()
+            // if has no results ->
+            // return server error message to only initiating user
+            // everyone else just sees the failed gif search
+            // ->> how do we prevent this causing issues on refresh?
+        } else {
+            reject({
+                err: "Param length is 0",
+            });
+        }
+    });
 };
 
 const addFeatureNotImplementedNode = action => {
@@ -342,11 +427,14 @@ const manageInlineEmbedsProcessor = node => {
             const param = message.slice(startParse + action.length).trim();
 
             switch (action) {
-                // case "/gif":
-                // if (msgUsername === currentUsername) {
-                //     getGifSelectNode(param).then(node => {});
-                // }
-                // break;
+                case "/gif":
+                    if (msgUsername === currentUsername) {
+                        getGifSelectNode(param).then(node => {
+                            appendMsgNodeToBuffer(node);
+                            msgNode.remove();
+                        });
+                    }
+                    break;
                 default:
                     addFeatureNotImplementedNode(action);
             }
@@ -532,31 +620,4 @@ const initScript = (() => {
     msgObserver.observe(msgBuffer, { childList: true });
     videoObserver.observe(videoBuffer, { childList: true });
     userlistObserver.observe(userList, { childList: true });
-
-    // eslint-disable-next-line no-unused-vars
-    const initLargeImageArea = (() => {
-        const imgPreviewClass = "image-preview";
-        if (document.querySelector(`.${imgPreviewClass}`) === null) {
-            const imgPreviewContainer = document.createElement("div");
-            imgPreviewContainer.classList.add(imgPreviewClass);
-            imgPreviewContainer.classList.add("hidden");
-            imgPreviewContainer.onclick = () => {
-                imgPreviewContainer.classList.add("hidden");
-            };
-
-            const previewImage = document.createElement("img");
-            imgPreviewContainer.appendChild(previewImage);
-
-            document.addEventListener("keydown", e => {
-                if (
-                    e.key === "Escape" &&
-                    !imgPreviewContainer.classList.contains("hidden")
-                ) {
-                    imgPreviewContainer.classList.add("hidden");
-                }
-            });
-
-            document.body.appendChild(imgPreviewContainer);
-        }
-    })();
 })();
