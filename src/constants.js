@@ -17,10 +17,12 @@ export const userConfig = [
     },
 ];
 
-export const currentUsername = document
-    .querySelector("#welcome")
-    .innerText.split(" ")
-    .getLastItem();
+export const getCurrentUsername = () => {
+    return document
+        .querySelector("#welcome")
+        .innerText.split(" ")
+        .getLastItem();
+};
 
 export const getCustomCSSNode = () => {
     return document.head.querySelector(".custom-css");

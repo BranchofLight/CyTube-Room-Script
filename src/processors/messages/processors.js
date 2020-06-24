@@ -6,7 +6,7 @@ import {
     getVideoNode,
     replaceMsgWithNode,
 } from "../../utility";
-import { currentUsername, newMessageEventString } from "../../constants";
+import { getCurrentUsername, newMessageEventString } from "../../constants";
 import {
     getGifSelectNode,
     addFeatureNotImplementedNode,
@@ -38,7 +38,7 @@ export const manageInlineEmbedsProcessor = node => {
 
             switch (action) {
                 case "/gif":
-                    if (msgUsername === currentUsername) {
+                    if (msgUsername === getCurrentUsername()) {
                         getGifSelectNode(param).then(node => {
                             appendMsgNodeToBuffer(node);
                             msgNode.remove();

@@ -1,4 +1,4 @@
-import { getCustomCSSNode, msgBuffer, currentUsername } from "./constants";
+import { getCustomCSSNode, msgBuffer, getCurrentUsername } from "./constants";
 
 export const addCSS = cssString => {
     getCustomCSSNode().innerText =
@@ -82,7 +82,7 @@ export const appendMsgNodeToBuffer = msg => {
     }
 
     const container = document.createElement("div");
-    container.classList.add(`chat-msg-${currentUsername}`);
+    container.classList.add(`chat-msg-${getCurrentUsername()}`);
 
     const timestamp = document.createElement("span");
     timestamp.classList.add("timestamp");
@@ -91,7 +91,7 @@ export const appendMsgNodeToBuffer = msg => {
 
     const usernameSpan = document.createElement("span");
     const usernameStrong = document.createElement("strong");
-    usernameStrong.innerText = currentUsername;
+    usernameStrong.innerText = getCurrentUsername();
     usernameStrong.classList.add("username");
 
     usernameSpan.appendChild(usernameStrong);
