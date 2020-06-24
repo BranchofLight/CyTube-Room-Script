@@ -1,0 +1,53 @@
+.hidden {
+    display: none !important;
+}
+
+.queue_entry > span:first-of-type {
+    margin-left: 5px;
+}
+
+.removed-msg {
+    display: none !important;
+}
+
+.media-container {
+    display: inline-block;
+    overflow: hidden;
+
+    .media-msg {
+        max-width: 200px;
+        max-height: 200px;
+    }
+
+    .image-msg {
+        transition: 0.2s all;
+        cursor: zoom-in;
+
+        &:hover {
+            transform: scale(1.25);
+        }
+    }
+}
+
+.image-preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: zoom-out;
+
+    img {
+        max-width: 80%;
+        max-height: 80%;
+    }
+}

@@ -1,0 +1,127 @@
+import { getCustomCSSNode, msgBuffer, currentUsername } from "./constants";
+
+export const addCSS = cssString => {
+    getCustomCSSNode().innerText =
+        getCustomCSSNode().innerText + " " + cssString;
+};
+
+export const isNodeServerMsg = node => {
+    return node.className.includes("server-msg");
+};
+
+export const scrollMsgBufferToBottom = () => {
+    msgBuffer.scrollTop = msgBuffer.scrollHeight;
+};
+
+export const getServerMsgNode = (msgText, colour) => {
+    const container = document.createElement("div");
+    container.classList.add("server-msg-reconnect");
+    container.innerText = msgText;
+    container.style.color = colour;
+
+    return container;
+};
+
+export const getMediaNode = () => {
+    const container = document.createElement("div");
+    container.classList.add("media-container");
+
+    return container;
+};
+
+export const getImgNode = imgSrc => {
+    const newNode = document.createElement("img");
+    newNode.src = imgSrc;
+    newNode.classList.add("image-msg");
+    newNode.classList.add("media-msg");
+
+    newNode.onclick = () => {
+        document.querySelector(".image-preview img").src = imgSrc;
+        document.querySelector(".image-preview").classList.remove("hidden");
+    };
+    newNode.onload = scrollMsgBufferToBottom;
+
+    return newNode;
+};
+
+export const getVideoNode = videoSrc => {
+    const newNode = document.createElement("video");
+    newNode.autoplay = true;
+    newNode.controls = true;
+    newNode.poster = true;
+    newNode.loop = true;
+    newNode.muted = true;
+
+    newNode.onloadedmetadata = scrollMsgBufferToBottom;
+    newNode.addEventListener("error", scrollMsgBufferToBottom);
+
+    const srcElement = document.createElement("source");
+    srcElement.src = videoSrc;
+    const fileExt = videoSrc.match(/(?=.)\w*$/i);
+    srcElement.type = "video/" + fileExt;
+
+    newNode.appendChild(srcElement);
+    newNode.classList.add("video-msg");
+    newNode.classList.add("media-msg");
+
+    return newNode;
+};
+
+/**
+ * @param {object | string} msg Can be a DOM element or text string. Will be appended to message buffer.
+ * @returns {null} returns null if msg isn't a node or text string, otherwise does not explicitly return
+ **/
+export const appendMsgNodeToBuffer = msg => {
+    const msgSpan = document.createElement("span");
+    if (typeof msg === "object" && msg.innerHTML !== undefined) {
+        msgSpan.appendChild(msg);
+    } else if (typeof msg === "string") {
+        msgSpan.innerText = msg;
+    } else {
+        return null;
+    }
+
+    const container = document.createElement("div");
+    container.classList.add(`chat-msg-${currentUsername}`);
+
+    const timestamp = document.createElement("span");
+    timestamp.classList.add("timestamp");
+    const dateTime = new Date();
+    timestamp.innerText = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}]`;
+
+    const usernameSpan = document.createElement("span");
+    const usernameStrong = document.createElement("strong");
+    usernameStrong.innerText = currentUsername;
+    usernameStrong.classList.add("username");
+
+    usernameSpan.appendChild(usernameStrong);
+
+    container.appendChild(timestamp);
+    container.appendChild(usernameSpan);
+    container.appendChild(msg);
+};
+
+export const getVisibilityData = () => {
+    if (typeof document.hidden !== "undefined") {
+        return {
+            hidden: "hidden",
+            visibilityEvent: "visibilitychange",
+        };
+    } else if (typeof document.msHidden !== "undefined") {
+        return {
+            hidden: "msHidden",
+            visibilityEvent: "msvisibilitychange",
+        };
+    } else if (typeof document.webkitHidden !== "undefined") {
+        return {
+            hidden: "webkitHidden",
+            visibilityEvent: "webkitvisibilitychange",
+        };
+    }
+
+    return undefined;
+};
+
+export const replaceMsgWithNode = (msgNode, newNode) => {
+    msgNode.parentNode.replaceChild(newNode, msgNode);
+};
