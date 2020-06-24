@@ -24,6 +24,8 @@ export const getCurrentUsername = () => {
         .getLastItem();
 };
 
+export const roomName = "geoffkeighleysroom";
+
 export const getCustomCSSNode = () => {
     return document.head.querySelector(".custom-css");
 };

@@ -36,7 +36,7 @@ export const getImgNode = imgSrc => {
     newNode.classList.add("media-msg");
 
     newNode.onclick = () => {
-        document.querySelector(".image-preview img").src = imgSrc;
+        document.querySelector(".image-preview img").src = newNode.src;
         document.querySelector(".image-preview").classList.remove("hidden");
     };
     newNode.onload = scrollMsgBufferToBottom;

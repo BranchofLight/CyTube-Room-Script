@@ -3,6 +3,7 @@ import {
     userConfig,
     getCustomCSSNode,
     newMessageEventString,
+    roomName,
 } from "./constants";
 import MAIN_CSS from "to-string-loader!css-loader!sass-loader!../style/index.scss";
 
@@ -68,13 +69,26 @@ const initCustomUserSettings = () => {
 const initVisibilityListener = () => {
     let newMsgInterval = undefined;
     const visiblityData = getVisibilityData();
-    window.addEventListener(newMessageEventString, () => {
-        if (!document[visiblityData.hidden] && newMsgInterval) {
-            clearInterval(newMsgInterval);
-            newMsgInterval = undefined;
-            document.title = "geoffkeighleysroom";
-        }
-    });
+    if (visiblityData !== undefined) {
+        window.addEventListener(newMessageEventString, () => {
+            if (!document[visiblityData.hidden] && newMsgInterval) {
+                clearInterval(newMsgInterval);
+                newMsgInterval = undefined;
+                document.title = roomName;
+            } else if (
+                document[visiblityData.hidden] &&
+                newMsgInterval === undefined
+            ) {
+                newMsgInterval = setInterval(() => {
+                    if (document.title === roomName) {
+                        document.title = "New Message!";
+                    } else {
+                        document.title = roomName;
+                    }
+                }, 500);
+            }
+        });
+    }
 };
 
 const initMisc = () => {
