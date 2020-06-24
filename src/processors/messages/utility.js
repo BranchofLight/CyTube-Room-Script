@@ -1,5 +1,5 @@
 import { apiConfig } from "./constants";
-import { getImgNode } from "../../utility";
+import { getImgNode, getMediaNode } from "../../utility";
 
 // const doesMsgContainWhitelistedAction = msg => {
 //   const msgSplit = msg.split(' ');
@@ -48,8 +48,9 @@ export const getGifSelectDialogNode = gifsList => {
     confirmButton.classList.add("confirm-button");
     confirmButton.innerText = "Confirm";
     confirmButton.addEventListener("click", () => {
-        container.parentNode.appendChild(gifNode);
-        container.remove();
+        let newNode = getMediaNode();
+        newNode.appendChild(gifNode);
+        container.parentNode.replaceChild(newNode, container);
     });
 
     const btnContainer = document.createElement("div");
