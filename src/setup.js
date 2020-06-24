@@ -71,11 +71,7 @@ const initVisibilityListener = () => {
     const visiblityData = getVisibilityData();
     if (visiblityData !== undefined) {
         window.addEventListener(newMessageEventString, () => {
-            if (!document[visiblityData.hidden] && newMsgInterval) {
-                clearInterval(newMsgInterval);
-                newMsgInterval = undefined;
-                document.title = roomName;
-            } else if (
+            if (
                 document[visiblityData.hidden] &&
                 newMsgInterval === undefined
             ) {
@@ -86,6 +82,14 @@ const initVisibilityListener = () => {
                         document.title = roomName;
                     }
                 }, 500);
+            }
+        });
+
+        window.addEventListener(visiblityData.visibilityEvent, () => {
+            if (!document[visiblityData.hidden]) {
+                clearInterval(newMsgInterval);
+                newMsgInterval = undefined;
+                document.title = roomName;
             }
         });
     }
