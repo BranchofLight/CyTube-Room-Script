@@ -13,6 +13,8 @@ import { getImgNode, getMediaNode } from "../../utility";
 // };
 
 export const getGifSelectDialogNode = gifsList => {
+    const wrapper = document.createElement("span");
+
     let gifsListIndex = 0;
     const container = document.createElement("span");
     container.classList.add("gif-dialog");
@@ -59,8 +61,10 @@ export const getGifSelectDialogNode = gifsList => {
     btnContainer.appendChild(confirmButton);
 
     container.appendChild(btnContainer);
+    wrapper.appendChild(container);
+    wrapper.style.display = "inline-block";
 
-    return container;
+    return wrapper;
 };
 
 export const getGifSelectNode = term => {
