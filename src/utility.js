@@ -99,6 +99,8 @@ export const appendMsgNodeToBuffer = msg => {
     container.appendChild(timestamp);
     container.appendChild(usernameSpan);
     container.appendChild(msgSpan);
+
+    msgBuffer.appendChild(container);
 };
 
 export const getVisibilityData = () => {
