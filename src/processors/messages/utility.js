@@ -27,6 +27,16 @@ export const getGifSelectDialogNode = gifsList => {
             gifsList[gifsListIndex].images.original.url;
     });
 
+    const gifContainer = document.createElement("div");
+    gifContainer.classList.add("gif-container");
+
+    const gifNode = getImgNode(gifsList[0].images.original.url);
+
+    gifContainer.appendChild(gifNode);
+
+    container.appendChild(gifContainer);
+    container.appendChild(nextButton);
+
     const cancelButton = document.createElement("button");
     cancelButton.classList.add("cancel-button");
     cancelButton.innerText = "Cancel";
@@ -38,20 +48,9 @@ export const getGifSelectDialogNode = gifsList => {
     confirmButton.classList.add("confirm-button");
     confirmButton.innerText = "Confirm";
     confirmButton.addEventListener("click", () => {
-        cancelButton.remove();
-        nextButton.remove();
-        confirmButton.remove();
+        container.parentNode.appendChild(gifNode);
+        container.remove();
     });
-
-    const gifContainer = document.createElement("div");
-    gifContainer.classList.add("gif-container");
-
-    const gifNode = getImgNode(gifsList[0].images.original.url);
-
-    gifContainer.appendChild(gifNode);
-
-    container.appendChild(gifContainer);
-    container.appendChild(nextButton);
 
     const btnContainer = document.createElement("div");
     btnContainer.classList.add("btn-container");
