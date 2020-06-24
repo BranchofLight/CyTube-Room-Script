@@ -73,6 +73,7 @@ export const getVideoNode = videoSrc => {
  **/
 export const appendMsgNodeToBuffer = msg => {
     const msgSpan = document.createElement("span");
+    msgSpan.style.display = "inline-block";
     if (typeof msg === "object" && msg.innerHTML !== undefined) {
         msgSpan.appendChild(msg);
     } else if (typeof msg === "string") {
@@ -87,11 +88,13 @@ export const appendMsgNodeToBuffer = msg => {
     const timestamp = document.createElement("span");
     timestamp.classList.add("timestamp");
     const dateTime = new Date();
-    timestamp.innerText = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}]`;
+    // Whitespace on end is expected
+    timestamp.innerText = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}] `;
 
     const usernameSpan = document.createElement("span");
     const usernameStrong = document.createElement("strong");
-    usernameStrong.innerText = getCurrentUsername();
+    // Whitespace on end is expected
+    usernameStrong.innerText = `${getCurrentUsername()}: `;
     usernameStrong.classList.add("username");
 
     usernameSpan.appendChild(usernameStrong);
