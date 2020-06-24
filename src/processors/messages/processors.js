@@ -28,7 +28,8 @@ export const manageInlineEmbedsProcessor = node => {
     const msgNode = node.querySelector(":scope > span:last-of-type");
     const msgUsername = node.className.split("-").getLastItem();
 
-    if (!isNodeServerMsg(node)) {
+    // NOTE: temporary binder twine to prevent other users from using experimental features
+    if (!isNodeServerMsg(node) && msgUsername === "geoffkeighley") {
         const message = msgNode.innerText;
         const action = message.split(" ")[0];
 
@@ -40,8 +41,8 @@ export const manageInlineEmbedsProcessor = node => {
                 case "/gif":
                     if (msgUsername === getCurrentUsername()) {
                         getGifSelectNode(param).then(gifNode => {
-                            replaceMsgWithNode(node, gifNode);
-                            // node.remove();
+                            appendMsgNodeToBuffer(gifNode);
+                            node.remove();
                         });
                     }
                     break;
