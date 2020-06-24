@@ -103,9 +103,28 @@ export const addFeatureNotImplementedNode = action => {
     return testNode;
 };
 
-export const doesMsgContainImg = msg => {
-    const urls = msg.match(/.*\.(?:jpg|gif|png|bmp|jpeg|webp)/i);
-    return urls !== null && urls.length === 1 && urls[0] === msg;
+const isImagePreloadTest = (url, onSuccess) => {
+    const image = new Image();
+    image.onload = onSuccess;
+    image.src = url;
+};
+
+export const doesMsgContainImg = (msg, onSuccess) => {
+    const fileExtMatch = msg.match(/.*\.(?:jpg|gif|png|bmp|jpeg|webp)/i);
+    const protocolMatch = msg.match(/^https:\/\/\S*/i);
+    if (
+        fileExtMatch !== null &&
+        fileExtMatch.length === 1 &&
+        fileExtMatch[0] === msg
+    ) {
+        onSuccess();
+    } else if (
+        protocolMatch !== null &&
+        protocolMatch.length === 1 &&
+        protocolMatch[0] === msg
+    ) {
+        isImagePreloadTest(msg, onSuccess);
+    }
 };
 
 export const doesMsgContainVideo = msg => {

@@ -56,18 +56,20 @@ export const addImgOrVideoProcessor = node => {
     const msgNode = node.querySelector(":scope > span:last-of-type");
     if (msgNode !== null && !isNodeServerMsg(node)) {
         const message = msgNode.innerText;
-        let newNode = undefined;
 
-        if (doesMsgContainImg(message)) {
-            newNode = getImgNode(message);
-        } else if (doesMsgContainVideo(message)) {
-            newNode = getVideoNode(message);
-        }
-
-        if (newNode !== undefined) {
+        // Simple Regex Check
+        if (doesMsgContainVideo(message)) {
             const container = getMediaNode();
-            container.appendChild(newNode);
+            container.appendChild(getVideoNode(message));
             replaceMsgWithNode(msgNode, container);
+        } else {
+            // Regex + preload attempt (if needed)
+            // Requires callback
+            doesMsgContainImg(message, () => {
+                const container = getMediaNode();
+                container.appendChild(getImgNode(message));
+                replaceMsgWithNode(msgNode, container);
+            });
         }
     }
 };
