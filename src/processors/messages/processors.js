@@ -1,10 +1,10 @@
 import {
     isNodeServerMsg,
     getImgNode,
-    appendMsgNodeToBuffer,
     getMediaNode,
     getVideoNode,
     replaceMsgWithNode,
+    scrollMsgBufferToBottom,
 } from "../../utility";
 import { getCurrentUsername, newMessageEventString } from "../../constants";
 import {
@@ -72,6 +72,12 @@ export const addImgOrVideoProcessor = node => {
             });
         }
     }
+};
+
+export const scrollBufferOnMsgSentProcessor = () => {
+    // Tagging for feature improvement consideration
+    // Eg. you can "break free" of new message scroll lock
+    scrollMsgBufferToBottom();
 };
 
 export const newMsgTabAlertProcessor = () => {

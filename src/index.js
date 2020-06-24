@@ -30,12 +30,12 @@ import {
     createProcessorsFromList,
     runAllProcessors,
 } from "./processors/utility";
-import { scrollMsgBufferToBottom } from "./utility";
 import {
     addUsernameToMsgProcessor,
     manageInlineEmbedsProcessor,
     newMsgTabAlertProcessor,
     addImgOrVideoProcessor,
+    scrollBufferOnMsgSentProcessor,
 } from "./processors/messages/processors";
 import { addUsernameToVideoProcessor } from "./processors/videos/processors";
 import {
@@ -49,7 +49,7 @@ const orderedMsgProcessors = [
     manageInlineEmbedsProcessor,
     newMsgTabAlertProcessor,
     addImgOrVideoProcessor,
-    scrollMsgBufferToBottom,
+    scrollBufferOnMsgSentProcessor,
 ];
 
 const orderedVideoProcessors = [addUsernameToVideoProcessor];
