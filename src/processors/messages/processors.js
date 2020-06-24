@@ -39,9 +39,9 @@ export const manageInlineEmbedsProcessor = node => {
             switch (action) {
                 case "/gif":
                     if (msgUsername === getCurrentUsername()) {
-                        getGifSelectNode(param).then(node => {
-                            replaceMsgWithNode(node);
-                            msgNode.remove();
+                        getGifSelectNode(param).then(gifNode => {
+                            replaceMsgWithNode(node, gifNode);
+                            // node.remove();
                         });
                     }
                     break;
