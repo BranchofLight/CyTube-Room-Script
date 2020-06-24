@@ -13,19 +13,49 @@
 .media-container {
     display: inline-block;
     overflow: hidden;
+}
 
-    .media-msg {
-        max-width: 200px;
-        max-height: 200px;
+.media-msg {
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.image-msg {
+    transition: 0.2s all;
+    cursor: zoom-in;
+
+    &:hover {
+        transform: scale(1.25);
+    }
+}
+
+.gif-dialog {
+    display: flex;
+    justify-content: center;
+
+    width: 200px;
+    height: 250px;
+
+    .gif-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+        height: 200px;
     }
 
-    .image-msg {
-        transition: 0.2s all;
-        cursor: zoom-in;
+    .next-button {
+        width: 100%;
+        height: 25px;
+    }
 
-        &:hover {
-            transform: scale(1.25);
-        }
+    .btn-container {
+        display: flex;
+        justify-content: space-between;
+
+        width: 100%;
+        height: 25px;
     }
 }
 

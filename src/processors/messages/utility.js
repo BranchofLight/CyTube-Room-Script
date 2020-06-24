@@ -41,12 +41,22 @@ export const getGifSelectDialogNode = gifsList => {
         confirmButton.remove();
     });
 
-    const imgNode = getImgNode(gifsList[0].images.original.url);
+    const gifContainer = document.createElement("div");
+    gifContainer.classList.add("gif-container");
 
-    container.appendChild(imgNode);
+    const gifNode = getImgNode(gifsList[0].images.original.url);
+
+    gifContainer.appendChild(gifNode);
+
+    container.appendChild(gifContainer);
     container.appendChild(nextButton);
-    container.appendChild(confirmButton);
-    container.appendChild(cancelButton);
+
+    const btnContainer = document.createElement("div");
+    btnContainer.classList.add("btn-container");
+    btnContainer.appendChild(cancelButton);
+    btnContainer.appendChild(confirmButton);
+
+    container.appendChild(btnContainer);
 
     return container;
 };
