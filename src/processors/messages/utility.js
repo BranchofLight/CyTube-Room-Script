@@ -30,7 +30,9 @@ export const getGifSelectDialogNode = gifsList => {
     const cancelButton = document.createElement("button");
     cancelButton.classList.add("cancel-button");
     cancelButton.innerText = "Cancel";
-    cancelButton.addEventListener("click", () => container.remove());
+    cancelButton.addEventListener("click", () => {
+        container.parentNode.parentNode.remove();
+    });
 
     const confirmButton = document.createElement("button");
     confirmButton.classList.add("confirm-button");
