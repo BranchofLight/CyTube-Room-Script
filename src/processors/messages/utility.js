@@ -98,12 +98,6 @@ export const getGifSelectNode = term => {
                         err: "API call was not sent correctly: " + err,
                     });
                 });
-            // if has results ->
-            // create node with gif inside and 3 buttons ()
-            // if has no results ->
-            // return server error message to only initiating user
-            // everyone else just sees the failed gif search
-            // ->> how do we prevent this causing issues on refresh?
         } else {
             reject({
                 err: "Param length is 0",

@@ -83,3 +83,12 @@ export const scrollBufferOnMsgSentProcessor = () => {
 export const newMsgTabAlertProcessor = () => {
     window.dispatchEvent(new Event(newMessageEventString));
 };
+
+export const modifyStandardMsgCmdProcessor = node => {
+    const imgNode = node.querySelector("img");
+    if (imgNode !== null && imgNode.title === "/waifu") {
+        imgNode.style.width = "300px !important";
+        imgNode.style.height = "300px !important";
+        imgNode.classList.add("image-msg");
+    }
+};

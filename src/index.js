@@ -36,6 +36,7 @@ import {
     newMsgTabAlertProcessor,
     addImgOrVideoProcessor,
     scrollBufferOnMsgSentProcessor,
+    modifyStandardMsgCmdProcessor,
 } from "./processors/messages/processors";
 import { addUsernameToVideoProcessor } from "./processors/videos/processors";
 import {
@@ -50,6 +51,7 @@ const orderedMsgProcessors = [
     newMsgTabAlertProcessor,
     addImgOrVideoProcessor,
     scrollBufferOnMsgSentProcessor,
+    modifyStandardMsgCmdProcessor,
 ];
 
 const orderedVideoProcessors = [addUsernameToVideoProcessor];
