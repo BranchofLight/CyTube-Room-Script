@@ -89,7 +89,7 @@ export const modifyStandardMsgCmdProcessor = node => {
     if (imgNode !== null && imgNode.title === "/waifu") {
         const container = getMediaNode();
 
-        imgNode.classList.add("image-msg big-emote");
+        imgNode.classList.add("image-msg", "big-emote");
 
         imgNode.parentNode.replaceChild(container, imgNode);
         container.appendChild(imgNode);
