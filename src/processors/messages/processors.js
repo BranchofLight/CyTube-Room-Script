@@ -87,8 +87,11 @@ export const newMsgTabAlertProcessor = () => {
 export const modifyStandardMsgCmdProcessor = node => {
     const imgNode = node.querySelector("img");
     if (imgNode !== null && imgNode.title === "/waifu") {
-        imgNode.style.width = "300px !important";
-        imgNode.style.height = "300px !important";
-        imgNode.classList.add("image-msg");
+        const container = getMediaNode();
+
+        imgNode.classList.add("image-msg big-emote");
+
+        imgNode.parentNode.replaceChild(container, imgNode);
+        container.appendChild(imgNode);
     }
 };
