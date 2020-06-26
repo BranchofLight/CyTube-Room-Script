@@ -51,7 +51,7 @@ export const manageInlineEmbedsProcessor = (node, isInitRun = false) => {
                             });
                     }
 
-                    node.remove();
+                    node.classList.add("hidden");
 
                     break;
                 default:
