@@ -105,7 +105,7 @@ const initGifResultsArea = () => {
 
     container.insertBefore(
         gifContainer,
-        container.querySelector("> *:first-child")
+        container.querySelector(":scope > *:first-child")
     );
 };
 
