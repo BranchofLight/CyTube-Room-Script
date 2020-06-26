@@ -138,7 +138,7 @@ export const replaceMsgWithNode = (msgNode, newNode) => {
 };
 
 export const clearGifSearchResults = () => {
-    getGifSearchNode().querySelector("results").innerHTML = "";
+    getGifSearchNode().querySelector(".results").innerHTML = "";
 };
 
 export const showGifError = () => {
