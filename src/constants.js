@@ -18,10 +18,10 @@ export const userConfig = [
 ];
 
 export const getCurrentUsername = () => {
-    return document
-        .querySelector("#welcome")
-        .innerText.split(" ")
-        .getLastItem();
+    const usernameNode = document.querySelector("#welcome");
+    return usernameNode !== null
+        ? usernameNode.innerText.split(" ").getLastItem()
+        : undefined;
 };
 
 export const roomName = "geoffkeighleysroom";
