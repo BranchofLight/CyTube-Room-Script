@@ -137,6 +137,10 @@ export const replaceMsgWithNode = (msgNode, newNode) => {
     msgNode.parentNode.replaceChild(newNode, msgNode);
 };
 
+export const clearGifSearchResults = () => {
+    getGifSearchNode().querySelector("results").innerHTML = "";
+};
+
 export const showGifError = () => {
     const errorMsgNode = getGifErrorMsgNode();
     if (errorMsgNode.classList.contains("hidden")) {
@@ -164,7 +168,6 @@ export const hideGifSearchResults = () => {
         container.classList.add("hidden");
     }
 
-    container.querySelector("results").innerHTML = "";
-
+    clearGifSearchResults();
     hideGifError();
 };

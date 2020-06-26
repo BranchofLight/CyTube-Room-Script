@@ -4,6 +4,7 @@ import {
     hideGifSearchResults,
     showGifError,
     hideGifError,
+    clearGifSearchResults,
 } from "../../utility";
 import {
     msgInput,
@@ -65,7 +66,8 @@ const getGifResultNode = gif => {
 
 export const updateGifSearchResults = gifList => {
     const resultsContainer = getGifSearchNode().querySelector(".results");
-    resultsContainer.innerHTML = "";
+
+    clearGifSearchResults();
 
     for (let i = 0; i < gifList.length; i++) {
         resultsContainer.appendChild(getGifResultNode(gifList[i]));
