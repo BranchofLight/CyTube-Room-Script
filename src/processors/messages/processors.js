@@ -46,7 +46,7 @@ export const manageInlineEmbedsProcessor = (node, isInitRun = false) => {
                             .then(gifListData => {
                                 updateGifSearchResults(gifListData);
                             })
-                            .catch(err => {
+                            .catch(({ err }) => {
                                 addErrorMsgToGifArea(err);
                             });
                     }
