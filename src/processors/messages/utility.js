@@ -12,7 +12,28 @@ import { getImgNode, getMediaNode } from "../../utility";
 //   return false;
 // };
 
+const shuffleList = list => {
+    let currentIndex = list.length;
+    let temporaryValue;
+    let randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = list[currentIndex];
+        list[currentIndex] = list[randomIndex];
+        list[randomIndex] = temporaryValue;
+    }
+
+    return list;
+};
+
 export const getGifSelectDialogNode = gifsList => {
+    gifsList = shuffleList(gifsList);
+
     const wrapper = document.createElement("span");
 
     let gifsListIndex = 0;
@@ -22,6 +43,7 @@ export const getGifSelectDialogNode = gifsList => {
     const nextButton = document.createElement("button");
     nextButton.classList.add("next-button");
     nextButton.innerText = "Next";
+
     nextButton.addEventListener("click", () => {
         gifsListIndex =
             gifsListIndex >= gifsList.length - 1 ? 0 : gifsListIndex + 1;
