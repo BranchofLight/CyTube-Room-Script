@@ -45,7 +45,7 @@ const getGifResultNode = gif => {
 
     const gifNode = document.createElement("img");
     gifNode.src = gif.images.original.url;
-    gifNode.addEventListener("click", () => {
+    container.addEventListener("click", () => {
         sendMsgViaChat(gifNode.src);
         hideGifSearchResults();
     });

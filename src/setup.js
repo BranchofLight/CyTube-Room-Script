@@ -1,4 +1,4 @@
-import { addCSS, getVisibilityData } from "./utility";
+import { addCSS, getVisibilityData, hideGifSearchResults } from "./utility";
 import {
     userConfig,
     getCustomCSSNode,
@@ -102,6 +102,14 @@ const initGifResultsArea = () => {
 
     const gifContainer = document.createElement("div");
     gifContainer.classList.add(gifSearchResultsClass, "hidden");
+
+    const closeButton = document.createElement("button");
+    closeButton.innerText = "X";
+    closeButton.addEventListener("click", () => {
+        hideGifSearchResults();
+    });
+
+    gifContainer.appendChild(closeButton);
 
     container.insertBefore(
         gifContainer,
