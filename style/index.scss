@@ -161,27 +161,29 @@
         }
     }
 
-    .gif-search-result {
+    .results {
         display: flex;
         align-items: center;
         justify-content: center;
 
-        width: 150px;
-        height: 150px;
+        .gif-search-result {
+            width: 150px;
+            height: 150px;
 
-        margin-bottom: 5px;
+            margin-bottom: 5px;
 
-        border: 2px solid #ffffff;
-        border-radius: 4px;
+            border: 2px solid #ffffff;
+            border-radius: 4px;
 
-        &:hover {
-            cursor: pointer;
-            border-color: #35d035;
-        }
+            &:hover {
+                cursor: pointer;
+                border-color: #35d035;
+            }
 
-        img {
-            max-width: 100%;
-            max-height: 100%;
+            img {
+                max-width: 100%;
+                max-height: 100%;
+            }
         }
     }
 }
