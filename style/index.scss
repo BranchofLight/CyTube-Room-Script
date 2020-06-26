@@ -125,10 +125,6 @@
 }
 
 .gif-results-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
     position: relative;
 
     width: 100%;
@@ -164,9 +160,14 @@
     .results {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
 
         .gif-search-result {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             width: 150px;
             height: 150px;
 

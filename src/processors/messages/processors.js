@@ -25,7 +25,7 @@ export const addUsernameToMsgProcessor = node => {
     }
 };
 
-export const manageInlineEmbedsProcessor = node => {
+export const manageInlineEmbedsProcessor = (node, isInitRun = false) => {
     const msgNode = node.querySelector(":scope > span:last-of-type");
     const msgUsername = node.className.split("-").getLastItem();
 
@@ -40,7 +40,7 @@ export const manageInlineEmbedsProcessor = node => {
 
             switch (action) {
                 case "/gif":
-                    if (msgUsername === getCurrentUsername()) {
+                    if (!isInitRun && msgUsername === getCurrentUsername()) {
                         makeGifSearchRequest(param)
                             .then(gifListData => {
                                 updateGifSearchResults(gifListData);

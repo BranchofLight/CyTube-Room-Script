@@ -28,7 +28,7 @@
 import { runSetup } from "./setup";
 import {
     createProcessorsFromList,
-    runAllProcessors,
+    initRunProcessors,
 } from "./processors/utility";
 import {
     addUsernameToMsgProcessor,
@@ -65,7 +65,7 @@ const orderedUserlistProcessors = [
 const initScript = (() => {
     runSetup();
 
-    runAllProcessors({
+    initRunProcessors({
         messages: orderedMsgProcessors,
         videos: orderedVideoProcessors,
         users: orderedUserlistProcessors,
