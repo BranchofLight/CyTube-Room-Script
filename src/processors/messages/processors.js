@@ -29,7 +29,7 @@ export const manageInlineEmbedsProcessor = node => {
     const msgUsername = node.className.split("-").getLastItem();
 
     // NOTE: temporary binder twine to prevent other users from using experimental features
-    if (!isNodeServerMsg(node) && msgUsername === "geoffkeighley") {
+    if (!isNodeServerMsg(node)) {
         const message = msgNode.innerText;
         const action = message.split(" ")[0];
 
@@ -39,11 +39,11 @@ export const manageInlineEmbedsProcessor = node => {
 
             switch (action) {
                 case "/gif":
-                    // if (msgUsername === getCurrentUsername()) {
-                    getGifSelectNode(param).then(gifNode => {
-                        replaceMsgWithNode(msgNode, gifNode);
-                    });
-                    // }
+                    if (msgUsername === getCurrentUsername()) {
+                        getGifSelectNode(param).then(gifNode => {
+                            replaceMsgWithNode(msgNode, gifNode);
+                        });
+                    }
                     break;
                 default:
                     addFeatureNotImplementedNode(action);
