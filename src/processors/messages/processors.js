@@ -43,6 +43,8 @@ export const manageInlineEmbedsProcessor = node => {
                         getGifSelectNode(param).then(gifNode => {
                             replaceMsgWithNode(msgNode, gifNode);
                         });
+                    } else {
+                        node.remove();
                     }
                     break;
                 default:
