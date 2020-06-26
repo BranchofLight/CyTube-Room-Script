@@ -153,6 +153,12 @@
         }
     }
 
+    .gif-error-msg {
+        border: 1px solid #ff7777;
+        display: inline-block;
+        padding: 5px 5px 5px 5px;
+    }
+
     .results {
         display: flex;
         align-items: center;

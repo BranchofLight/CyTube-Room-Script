@@ -84,6 +84,7 @@ export const addErrorMsgToGifArea = errMsg => {
         errorMsgNode.classList.remove("hidden");
     }
 
+    clearGifSearchResults();
     showGifError();
     showGifSearchResults();
 };
