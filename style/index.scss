@@ -126,6 +126,7 @@
     width: 100%;
 
     margin-top: 5px;
+    padding-top: 30px;
 
     button {
         position: absolute;
@@ -141,12 +142,11 @@
         border: 1px solid #ff7777;
         border-radius: 4px;
 
-        transition: background-color 0.1s;
-        transition: color 0.1s;
+        transition: background-color, color 0.1s;
 
         &:hover {
             background-color: #ff7777;
-            color: #000000;
+            color: #ffffff;
         }
     }
 
