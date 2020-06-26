@@ -1,5 +1,6 @@
 import { apiConfig } from "./constants";
 import { getImgNode, getMediaNode } from "../../utility";
+import { msgBuffer, msgInput } from "../../constants";
 
 // const doesMsgContainWhitelistedAction = msg => {
 //   const msgSplit = msg.split(' ');
@@ -31,6 +32,23 @@ const shuffleList = list => {
     return list;
 };
 
+const sendMsgViaChat = msg => {
+    msgInput.value = msg;
+    const enterKeyEvent = new Event("keydown");
+    enterKeyEvent.keyCode = 13;
+
+    msgInput.dispatchEvent(enterKeyEvent);
+};
+
+// Proposed change:
+// - When user spawns a gif, generate it below the chat
+// - Once added, can send it to channel
+// - Prevents scrolling affecting gif selection
+// - Can overwrite gif area with newest term search if user searches again without confirm/cancel on previous
+// - Larger area, can show better preview
+// - Can provide search bar (1000 requests per day, this isn't an issue for num of users)
+// - Down the road could paginate
+// - Still shuffle? Shuffle pages down the road?
 export const getGifSelectDialogNode = gifsList => {
     gifsList = shuffleList(gifsList);
 
@@ -65,16 +83,18 @@ export const getGifSelectDialogNode = gifsList => {
     cancelButton.classList.add("cancel-button");
     cancelButton.innerText = "Cancel";
     cancelButton.addEventListener("click", () => {
-        container.parentNode.parentNode.remove();
+        wrapper.parentNode.remove();
     });
 
     const confirmButton = document.createElement("button");
     confirmButton.classList.add("confirm-button");
     confirmButton.innerText = "Confirm";
     confirmButton.addEventListener("click", () => {
-        let newNode = getMediaNode();
-        newNode.appendChild(gifNode);
-        container.parentNode.replaceChild(newNode, container);
+        // let newNode = getMediaNode();
+        // newNode.appendChild(gifNode);
+        // container.parentNode.replaceChild(newNode, container);
+        wrapper.parentNode.remove();
+        sendMsgViaChat(gifsList[gifsListIndex].images.original.url);
     });
 
     const btnContainer = document.createElement("div");

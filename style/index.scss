@@ -42,8 +42,6 @@
     width: 200px;
     height: 250px;
 
-    border: 1px dashed white;
-
     .gif-container {
         display: flex;
         justify-content: center;
@@ -53,6 +51,8 @@
         height: 200px;
 
         overflow: hidden;
+
+        border: 1px dotted white;
     }
 
     button {
@@ -61,7 +61,7 @@
         border-right: 3px;
         background-color: #ffffff;
 
-        transition: border-width 0.25s;
+        transition: border-width 0.1s;
         color: #000000;
 
         &:hover {

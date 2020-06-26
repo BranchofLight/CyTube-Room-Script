@@ -35,3 +35,5 @@ export const newMessageEventString = "NewMessage";
 export const msgBuffer = document.querySelector("#messagebuffer");
 export const videoBuffer = document.querySelector(".videolist#queue");
 export const userList = document.querySelector("#userlist");
+
+export const msgInput = document.querySelector("#chatline");
