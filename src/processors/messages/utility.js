@@ -40,16 +40,18 @@ const sendMsgViaChat = msg => {
 };
 
 const getGifResultNode = gif => {
+    const container = document.createElement("div");
+    container.classList.add("gif-search-result");
+
     const gifNode = document.createElement("img");
     gifNode.src = gif.images.original.url;
-    gifNode.classList.add("gif-search-result");
-
     gifNode.addEventListener("click", () => {
         sendMsgViaChat(gifNode.src);
         hideGifSearchResults();
     });
 
-    return gifNode;
+    container.appendChild(gifNode);
+    return container;
 };
 
 // Proposed change:
@@ -63,6 +65,8 @@ const getGifResultNode = gif => {
 // - Still shuffle? Shuffle pages down the road?
 export const updateGifSearchResults = gifList => {
     const gifSearchContainer = getGifSearchArea();
+    gifSearchContainer.innerHTML = "";
+
     for (let i = 0; i < gifList.length; i++) {
         gifSearchContainer.appendChild(getGifResultNode(gifList[i]));
     }
