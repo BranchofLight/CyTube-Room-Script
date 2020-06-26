@@ -64,11 +64,11 @@ const getGifResultNode = gif => {
 // - Down the road could paginate
 // - Still shuffle? Shuffle pages down the road?
 export const updateGifSearchResults = gifList => {
-    const gifSearchContainer = getGifSearchArea();
-    gifSearchContainer.innerHTML = "";
+    const resultsContainer = getGifSearchArea().querySelector(".results");
+    resultsContainer.innerHTML = "";
 
     for (let i = 0; i < gifList.length; i++) {
-        gifSearchContainer.appendChild(getGifResultNode(gifList[i]));
+        resultsContainer.appendChild(getGifResultNode(gifList[i]));
     }
 
     showGifSearchResults();

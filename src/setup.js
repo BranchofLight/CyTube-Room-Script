@@ -103,6 +103,9 @@ const initGifResultsArea = () => {
     const gifContainer = document.createElement("div");
     gifContainer.classList.add(gifSearchResultsClass, "hidden");
 
+    const resultsContainer = document.createElement("div");
+    resultsContainer.classList.add("results");
+
     const closeButton = document.createElement("button");
     closeButton.innerText = "X";
     closeButton.addEventListener("click", () => {
@@ -110,6 +113,7 @@ const initGifResultsArea = () => {
     });
 
     gifContainer.appendChild(closeButton);
+    gifContainer.appendChild(resultsContainer);
 
     container.insertBefore(
         gifContainer,
