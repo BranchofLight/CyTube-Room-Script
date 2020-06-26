@@ -39,11 +39,11 @@ export const manageInlineEmbedsProcessor = node => {
 
             switch (action) {
                 case "/gif":
-                    if (msgUsername === getCurrentUsername()) {
-                        getGifSelectNode(param).then(gifNode => {
-                            replaceMsgWithNode(msgNode, gifNode);
-                        });
-                    }
+                    // if (msgUsername === getCurrentUsername()) {
+                    getGifSelectNode(param).then(gifNode => {
+                        replaceMsgWithNode(msgNode, gifNode);
+                    });
+                    // }
                     break;
                 default:
                     addFeatureNotImplementedNode(action);

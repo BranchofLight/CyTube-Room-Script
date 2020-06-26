@@ -90,9 +90,6 @@ export const getGifSelectDialogNode = gifsList => {
     confirmButton.classList.add("confirm-button");
     confirmButton.innerText = "Confirm";
     confirmButton.addEventListener("click", () => {
-        // let newNode = getMediaNode();
-        // newNode.appendChild(gifNode);
-        // container.parentNode.replaceChild(newNode, container);
         wrapper.parentNode.remove();
         sendMsgViaChat(gifsList[gifsListIndex].images.original.url);
     });
