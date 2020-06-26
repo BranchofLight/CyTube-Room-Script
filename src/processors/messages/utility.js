@@ -1,6 +1,6 @@
 import { apiConfig } from "./constants";
-import { getImgNode, getMediaNode } from "../../utility";
-import { msgBuffer, msgInput } from "../../constants";
+import { showGifSearchResults, hideGifSearchResults } from "../../utility";
+import { msgInput, getGifSearchArea } from "../../constants";
 
 // const doesMsgContainWhitelistedAction = msg => {
 //   const msgSplit = msg.split(' ');
@@ -18,7 +18,6 @@ const shuffleList = list => {
     let temporaryValue;
     let randomIndex;
 
-    // While there remain elements to shuffle...
     while (0 !== currentIndex) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
@@ -40,8 +39,21 @@ const sendMsgViaChat = msg => {
     msgInput.dispatchEvent(enterKeyEvent);
 };
 
+const getGifResultNode = gif => {
+    const gifNode = document.createElement("img");
+    gifNode.src = gif.images.original.url;
+    gifNode.classList.add("gif-search-result");
+
+    gifNode.addEventListener("click", () => {
+        sendMsgViaChat(gifNode.src);
+        hideGifSearchResults();
+    });
+
+    return gifNode;
+};
+
 // Proposed change:
-// - When user spawns a gif, generate it below the chat
+// - When user fires a /gif search, generate results below the chat
 // - Once added, can send it to channel
 // - Prevents scrolling affecting gif selection
 // - Can overwrite gif area with newest term search if user searches again without confirm/cancel on previous
@@ -49,64 +61,16 @@ const sendMsgViaChat = msg => {
 // - Can provide search bar (1000 requests per day, this isn't an issue for num of users)
 // - Down the road could paginate
 // - Still shuffle? Shuffle pages down the road?
-export const getGifSelectDialogNode = gifsList => {
-    gifsList = shuffleList(gifsList);
+export const updateGifSearchResults = gifList => {
+    const gifSearchContainer = getGifSearchArea();
+    for (let i = 0; i < gifList.length; i++) {
+        gifSearchContainer.appendChild(getGifResultNode(gifList[i]));
+    }
 
-    const wrapper = document.createElement("span");
-
-    let gifsListIndex = 0;
-    const container = document.createElement("span");
-    container.classList.add("gif-dialog");
-
-    const nextButton = document.createElement("button");
-    nextButton.classList.add("next-button");
-    nextButton.innerText = "Next";
-
-    nextButton.addEventListener("click", () => {
-        gifsListIndex =
-            gifsListIndex >= gifsList.length - 1 ? 0 : gifsListIndex + 1;
-        container.querySelector("img").src =
-            gifsList[gifsListIndex].images.original.url;
-    });
-
-    const gifContainer = document.createElement("div");
-    gifContainer.classList.add("gif-container");
-
-    const gifNode = getImgNode(gifsList[0].images.original.url);
-
-    gifContainer.appendChild(gifNode);
-
-    container.appendChild(gifContainer);
-    container.appendChild(nextButton);
-
-    const cancelButton = document.createElement("button");
-    cancelButton.classList.add("cancel-button");
-    cancelButton.innerText = "Cancel";
-    cancelButton.addEventListener("click", () => {
-        wrapper.parentNode.remove();
-    });
-
-    const confirmButton = document.createElement("button");
-    confirmButton.classList.add("confirm-button");
-    confirmButton.innerText = "Confirm";
-    confirmButton.addEventListener("click", () => {
-        wrapper.parentNode.remove();
-        sendMsgViaChat(gifsList[gifsListIndex].images.original.url);
-    });
-
-    const btnContainer = document.createElement("div");
-    btnContainer.classList.add("btn-container");
-    btnContainer.appendChild(cancelButton);
-    btnContainer.appendChild(confirmButton);
-
-    container.appendChild(btnContainer);
-    wrapper.appendChild(container);
-    wrapper.style.display = "inline-block";
-
-    return wrapper;
+    showGifSearchResults();
 };
 
-export const getGifSelectNode = term => {
+export const makeGifSearchRequest = term => {
     return new Promise((resolve, reject) => {
         if (term.length > 0) {
             fetch(
@@ -122,9 +86,12 @@ export const getGifSelectNode = term => {
                     } else {
                         res.json()
                             .then(({ data }) => {
-                                console.log(data);
                                 if (data.length > 0) {
-                                    resolve(getGifSelectDialogNode(data));
+                                    resolve(shuffleList(data));
+                                } else {
+                                    reject({
+                                        err: "No results for given search term",
+                                    });
                                 }
                             })
                             .catch(err => {

@@ -8,7 +8,8 @@ import {
 } from "../../utility";
 import { getCurrentUsername, newMessageEventString } from "../../constants";
 import {
-    getGifSelectNode,
+    makeGifSearchRequest,
+    updateGifSearchResults,
     addFeatureNotImplementedNode,
     doesMsgContainImg,
     doesMsgContainVideo,
@@ -40,12 +41,18 @@ export const manageInlineEmbedsProcessor = node => {
             switch (action) {
                 case "/gif":
                     if (msgUsername === getCurrentUsername()) {
-                        getGifSelectNode(param).then(gifNode => {
-                            replaceMsgWithNode(msgNode, gifNode);
-                        });
-                    } else {
-                        node.remove();
+                        makeGifSearchRequest(param)
+                            .then(gifListData => {
+                                updateGifSearchResults(gifListData);
+                            })
+                            .catch(err => {
+                                // no results, or something else happened
+                                // server message to initiating user?
+                            });
                     }
+
+                    node.remove();
+
                     break;
                 default:
                     addFeatureNotImplementedNode(action);

@@ -37,3 +37,8 @@ export const videoBuffer = document.querySelector(".videolist#queue");
 export const userList = document.querySelector("#userlist");
 
 export const msgInput = document.querySelector("#chatline");
+
+export const gifSearchResultsClass = "gif-results-container";
+export const getGifSearchArea = () => {
+    return document.querySelector(`.${gifSearchResultsClass}`);
+};

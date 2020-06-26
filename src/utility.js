@@ -1,4 +1,9 @@
-import { getCustomCSSNode, msgBuffer, getCurrentUsername } from "./constants";
+import {
+    getCustomCSSNode,
+    msgBuffer,
+    getCurrentUsername,
+    getGifSearchArea,
+} from "./constants";
 
 export const addCSS = cssString => {
     getCustomCSSNode().innerText =
@@ -129,4 +134,18 @@ export const getVisibilityData = () => {
 
 export const replaceMsgWithNode = (msgNode, newNode) => {
     msgNode.parentNode.replaceChild(newNode, msgNode);
+};
+
+export const showGifSearchResults = () => {
+    const container = getGifSearchArea();
+    if (container.classList.contains("hidden")) {
+        container.classList.remove("hidden");
+    }
+};
+
+export const hideGifSearchResults = () => {
+    const container = getGifSearchArea();
+    if (!container.classList.contains("hidden")) {
+        container.classList.add("hidden");
+    }
 };

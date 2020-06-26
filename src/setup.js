@@ -4,6 +4,7 @@ import {
     getCustomCSSNode,
     newMessageEventString,
     roomName,
+    gifSearchResultsClass,
 } from "./constants";
 import MAIN_CSS from "to-string-loader!css-loader!sass-loader!../style/index.scss";
 
@@ -95,6 +96,19 @@ const initVisibilityListener = () => {
     }
 };
 
+const initGifResultsArea = () => {
+    const container = document.querySelector("#leftpane-inner");
+    container.classList.remove("row");
+
+    const gifContainer = document.createElement("div");
+    gifContainer.classList.add(gifSearchResultsClass, "hidden");
+
+    container.insertBefore(
+        gifContainer,
+        container.querySelector("> *:first-child")
+    );
+};
+
 const initMisc = () => {
     Array.prototype.getLastItem = function () {
         return this[this.length - 1];
@@ -107,4 +121,5 @@ export const runSetup = () => {
     initCustomCSS();
     initCustomUserSettings();
     initVisibilityListener();
+    initGifResultsArea();
 };
