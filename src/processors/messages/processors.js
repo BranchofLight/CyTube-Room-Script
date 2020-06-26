@@ -13,6 +13,7 @@ import {
     addFeatureNotImplementedNode,
     doesMsgContainImg,
     doesMsgContainVideo,
+    addErrorMsgToGifArea,
 } from "./utility";
 import { whitelistedActions } from "./constants";
 
@@ -46,8 +47,7 @@ export const manageInlineEmbedsProcessor = (node, isInitRun = false) => {
                                 updateGifSearchResults(gifListData);
                             })
                             .catch(err => {
-                                // no results, or something else happened
-                                // server message to initiating user?
+                                addErrorMsgToGifArea(err);
                             });
                     }
 

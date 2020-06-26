@@ -5,6 +5,7 @@ import {
     newMessageEventString,
     roomName,
     gifSearchResultsClass,
+    gifErrorMsgClass,
 } from "./constants";
 import MAIN_CSS from "to-string-loader!css-loader!sass-loader!../style/index.scss";
 
@@ -112,7 +113,11 @@ const initGifResultsArea = () => {
         hideGifSearchResults();
     });
 
+    const errorMsgNode = document.createElement("div");
+    errorMsgNode.classList.add(gifErrorMsgClass, "hidden");
+
     gifContainer.appendChild(closeButton);
+    gifContainer.appendChild(errorMsgNode);
     gifContainer.appendChild(resultsContainer);
 
     container.insertBefore(

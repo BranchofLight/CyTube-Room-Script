@@ -2,7 +2,8 @@ import {
     getCustomCSSNode,
     msgBuffer,
     getCurrentUsername,
-    getGifSearchArea,
+    getGifSearchNode,
+    getGifErrorMsgNode,
 } from "./constants";
 
 export const addCSS = cssString => {
@@ -136,16 +137,32 @@ export const replaceMsgWithNode = (msgNode, newNode) => {
     msgNode.parentNode.replaceChild(newNode, msgNode);
 };
 
+export const showGifError = () => {
+    const errorMsgNode = getGifErrorMsgNode();
+    if (errorMsgNode.classList.contains("hidden")) {
+        errorMsgNode.classList.remove("hidden");
+    }
+};
+
+const hideGifError = () => {
+    const errorMsgNode = getGifErrorMsgNode();
+    if (!errorMsgNode.classList.contains("hidden")) {
+        errorMsgNode.classList.add("hidden");
+    }
+};
+
 export const showGifSearchResults = () => {
-    const container = getGifSearchArea();
+    const container = getGifSearchNode();
     if (container.classList.contains("hidden")) {
         container.classList.remove("hidden");
     }
 };
 
 export const hideGifSearchResults = () => {
-    const container = getGifSearchArea();
+    const container = getGifSearchNode();
     if (!container.classList.contains("hidden")) {
         container.classList.add("hidden");
     }
+
+    hideGifError();
 };

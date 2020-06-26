@@ -1,6 +1,14 @@
 import { apiConfig } from "./constants";
-import { showGifSearchResults, hideGifSearchResults } from "../../utility";
-import { msgInput, getGifSearchArea } from "../../constants";
+import {
+    showGifSearchResults,
+    hideGifSearchResults,
+    showGifError,
+} from "../../utility";
+import {
+    msgInput,
+    getGifSearchNode,
+    getGifErrorMsgNode,
+} from "../../constants";
 
 // const doesMsgContainWhitelistedAction = msg => {
 //   const msgSplit = msg.split(' ');
@@ -54,23 +62,25 @@ const getGifResultNode = gif => {
     return container;
 };
 
-// Proposed change:
-// - When user fires a /gif search, generate results below the chat
-// - Once added, can send it to channel
-// - Prevents scrolling affecting gif selection
-// - Can overwrite gif area with newest term search if user searches again without confirm/cancel on previous
-// - Larger area, can show better preview
-// - Can provide search bar (1000 requests per day, this isn't an issue for num of users)
-// - Down the road could paginate
-// - Still shuffle? Shuffle pages down the road?
 export const updateGifSearchResults = gifList => {
-    const resultsContainer = getGifSearchArea().querySelector(".results");
+    const resultsContainer = getGifSearchNode().querySelector(".results");
     resultsContainer.innerHTML = "";
 
     for (let i = 0; i < gifList.length; i++) {
         resultsContainer.appendChild(getGifResultNode(gifList[i]));
     }
 
+    showGifSearchResults();
+};
+
+export const addErrorMsgToGifArea = errMsg => {
+    const errorMsgNode = getGifErrorMsgNode();
+    errorMsgNode.innerText = errMsg;
+    if (errorMsgNode.classList.contains("hidden")) {
+        errorMsgNode.classList.remove("hidden");
+    }
+
+    showGifError();
     showGifSearchResults();
 };
 

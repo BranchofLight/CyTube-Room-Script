@@ -39,6 +39,11 @@ export const userList = document.querySelector("#userlist");
 export const msgInput = document.querySelector("#chatline");
 
 export const gifSearchResultsClass = "gif-results-container";
-export const getGifSearchArea = () => {
+export const gifErrorMsgClass = "gif-error-msg";
+
+export const getGifSearchNode = () => {
     return document.querySelector(`.${gifSearchResultsClass}`);
+};
+export const getGifErrorMsgNode = () => {
+    return getGifSearchNode().querySelector(`.${gifErrorMsgClass}`);
 };
