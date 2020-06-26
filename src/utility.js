@@ -144,7 +144,7 @@ export const showGifError = () => {
     }
 };
 
-const hideGifError = () => {
+export const hideGifError = () => {
     const errorMsgNode = getGifErrorMsgNode();
     if (!errorMsgNode.classList.contains("hidden")) {
         errorMsgNode.classList.add("hidden");
@@ -163,6 +163,8 @@ export const hideGifSearchResults = () => {
     if (!container.classList.contains("hidden")) {
         container.classList.add("hidden");
     }
+
+    container.querySelector("results").innerHTML = "";
 
     hideGifError();
 };

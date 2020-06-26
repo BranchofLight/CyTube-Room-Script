@@ -3,6 +3,7 @@ import {
     showGifSearchResults,
     hideGifSearchResults,
     showGifError,
+    hideGifError,
 } from "../../utility";
 import {
     msgInput,
@@ -70,6 +71,7 @@ export const updateGifSearchResults = gifList => {
         resultsContainer.appendChild(getGifResultNode(gifList[i]));
     }
 
+    hideGifError();
     showGifSearchResults();
 };
 
