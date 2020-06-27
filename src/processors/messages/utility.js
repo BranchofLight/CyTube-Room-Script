@@ -58,6 +58,7 @@ const getGifResultNode = gif => {
     container.addEventListener("click", () => {
         sendMsgViaChat(gifNode.src);
         hideGifSearchResults();
+        msgInput.focus();
     });
 
     container.appendChild(gifNode);
@@ -75,6 +76,7 @@ export const updateGifSearchResults = gifList => {
 
     hideGifError();
     showGifSearchResults();
+    resultsContainer.scrollTop = 0;
 };
 
 export const addErrorMsgToGifArea = errMsg => {

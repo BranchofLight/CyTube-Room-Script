@@ -1,22 +1,3 @@
-/**
- * TODO
- * /gif ->
- *      => capture each keydown (verify its a character if possible) in a string
- *      => when ENTER is pressed, check if it has commands
- *      => process commands
- *      => never have to do this from msg buffer this way
- * Integrate webpack for bundling and minifying ONLY (use prettier watch, eslint vscode extension)
- * Break out code into other files (processors, utility, or whatever makes sense)
- * /video -> take lead (if don't already have it), pause video (admin / mod only)
- *        => can I do this with the youtube api directly? or simulate click?
- **/
-
-// gif ideas:
-// -> embed a block that allows you to ask for new gif before committing (ala Slack)
-//    -> use visual notifications of confirmed / not confirmed gifs
-
-// /gif term
-// -> search gif api for term
 // Create way to send "server" messages (used for everything)
 // /video
 // -> pauses / play video with lead (admin/mod only)
@@ -24,6 +5,9 @@
 // -> spin whatever shows to the right
 // /scroll
 // -> scroll whatever shows to the right
+// /gif improvements
+// -> pagination (scroll to bottom, load next page)
+// -> add query to gifNode.title (not sure how, don't want to send JSON again)
 
 import { runSetup } from "./setup";
 import {
