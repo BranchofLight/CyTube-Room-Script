@@ -15,7 +15,7 @@ import {
     doesMsgContainVideo,
     addErrorMsgToGifArea,
 } from "./utility";
-import { whitelistedActions } from "./constants";
+import { whitelistedActions, largeEmotes } from "./constants";
 
 export const addUsernameToMsgProcessor = node => {
     if (!isNodeServerMsg(node) && node.querySelector(".username") === null) {
@@ -95,7 +95,7 @@ export const newMsgTabAlertProcessor = () => {
 
 export const modifyStandardMsgCmdProcessor = node => {
     node.querySelectorAll("img").forEach(imgNode => {
-        if (imgNode !== null && imgNode.title === "/waifu") {
+        if (imgNode !== null && largeEmotes.includes(imgNode.title)) {
             const container = getMediaNode();
             const newImgNode = getImgNode(imgNode.src);
 
